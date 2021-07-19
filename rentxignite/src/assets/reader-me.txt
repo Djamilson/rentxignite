@@ -1,0 +1,5 @@
+for use svg remove 'fill' this svg
+
+video customizando o Bottom Tab, time 10:19
+
+tem que remover a propriedade do svg fill

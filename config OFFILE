@@ -1,0 +1,42 @@
+
+$expo start
+
+agora
+
+$yarn start
+$yarn ios
+
+Banco de dados local
+https://nozbe.github.io/WatermelonDB/Installation.html
+
+$yarn add @nozbe/watermelondb
+$yarn add @babel/plugin-proposal-decorators -D
+
+OBS: Add os plugins Add ES6 decorators support to your .babelrc file:
+
+{
+  "presets": ["module:metro-react-native-babel-preset"],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
+  ]
+}
+
+
+#Depois das configurações IOS
+
+$cd ios
+$pod install
+
+
+$expo install @react-native-community/netinfo
+$expo install expo-device
+$yarn add react-native-fast-image
+$yarn react-native link react-native-fast-image
+$yarn add react-native-svg-transformer -D
+$expo install expo-image-picker
+
+
+
+
+
+

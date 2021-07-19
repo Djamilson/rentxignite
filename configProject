@@ -1,0 +1,130 @@
+$expo init rentxignite 
+	Choose a template: › minimal  
+
+=============ESLINT====================
+$sudo yarn add eslint -D
+$sudo yarn eslint --init
+	❯ To check syntax, find problems, and enforce code style
+	❯ JavaScript modules (import/export) 
+	❯ React 
+	? Does your project use TypeScript? (y/N) y
+	? Where does your code run? 
+		❯◯ Browser
+		 ◯ Node
+	 ❯ Use a popular style guide 
+	 ❯ Airbnb: https://github.com/airbnb/javascript 
+	 ❯ JSON 
+	 Do you want to downgrade? (Y/n) y
+	 ? Would you like to install them now with npm? (Y/n) n
+	 
+
+
+$yarn add prettier eslint-config-prettier eslint-plugin-prettier eslint-import-resolver-typescript eslint-plugin-import-helpers -D
+$yarn add eslint-import-resolver-typescript eslint-plugin-import-helpers -D
+
+
+$yarn add eslint-plugin-react@latest @typescript-eslint/eslint-plugin@latest eslint-config-standard@latest eslint-plugin-import@^2.22.1 eslint-plugin-node@^11.1.0 eslint-plugin-promise@^^5.0.0 @typescript-eslint/parser@latest -D
+
+
+##navegação
+
+$yarn add @react-navigation/native @react-navigation/stack
+
+$expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
+$yarn add @react-navigation/bottom-tabs
+$yarn add react-native-dotenv -D 
+
+$yarn add intl
+$yarn add styled-components
+$yarn add @types/styled-components-react-native -D
+
+################ FONTS ####################
+$expo install expo-font @expo-google-fonts/inter  @expo-google-fonts/archivo
+
+################ IMAGE SVG ################
+$expo install react-native-svg
+$yarn add react-native-svg-transformer -D
+
+$yarn add react-native-responsive-fontsize
+$yarn add react-native-iphone-x-helper
+
+################ CALEDAR ################
+$yarn add react-native-calendars
+$yarn add @types/react-native-calendars
+
+
+##navegação
+
+$yarn add @react-navigation/native @react-navigation/stack
+
+$expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
+$yarn add @react-navigation/bottom-tabs
+$expo install lottie-react-native
+$yarn add axios
+
+
+###service
+
+$npm install -g json-server
+
+$json-server ./src/_services/server.json
+
+ou
+
+$json-server ./src/_services/server.json --host 192.168.1.107 --port 3333 --delay 700
+
+para facilitar a execução, no package.json add
+
+"scripts": {
+    .
+    .
+    .
+    "api": "json-server ./src/_services/server.json --host 192.168.1.107 --port 3333 --delay 700"
+  },
+  
+
+$yarn api
+ 
+ 
+ 
+=====calendar
+$yarn add date-fns 
+
+$expo install react-native-reanimated
+
+OBS add dentro do Babel.config.js 
+
+ plugins: ['react-native-reanimated/plugin',]
+ 
+######Splash
+
+https://docs.expo.io/versions/latest/sdk/splash-screen/
+Figma
+https://www.figma.com/file/ddc0glVeILssZl0Dcn1lSS/App-Icon-%26-Splash?node-id=0%3A1
+
+$expo install expo-splash-screen
+$expo install expo-app-loading
+
+OBS: 1-Na raiz cria a pasta assets;
+     2-copia a imagem que foi gerada no figma para dentro da pasta que foi criada;
+     3-renomea a imagem copiada para splash
+     4-adicionar dentro do arquivo app.json o seguinte código abaixo
+     
+     "splash": { "image": "./assets/splash.png",
+    "backgroundColor": "#1B1B1F"
+  }
+
+
+Mudar dentro da pasta android/app/build.gradle => deve ficar true
+
+project.ext.react = [
+    enableHermes: true
+]
+
+
+$yarn add yup
+
+
+

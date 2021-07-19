@@ -1,0 +1,27 @@
+$expo init my-project
+› minimal (TypeScript)
+$expo start
+
+$expo install expo-font @expo-google-fonts/roboto-slab
+$expo install expo-app-loading
+$yarn add react-native-responsive-fontsize
+
+
+##navegação
+
+$yarn add @react-navigation/native @react-navigation/stack
+
+$expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
+$yarn add @react-navigation/bottom-tabs
+
+##tratar moeda
+$rn add intl                 
+$expo install @react-native-async-storage/async-storage  
+$expo install expo-location
+$expo install expo-splash-screen
+$expo install react-native-maps
+$expo install @react-native-community/slider
+
+$expo install expo-image-picker
+

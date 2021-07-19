@@ -1,0 +1,25 @@
+[
+  {
+    "logging": true,
+    "type": "postgres",
+    "host": "localhost",
+    "port": "25432",
+    "username": "djamilson",
+    "password": "35c9bc2d86cd68ca5b68a1330ab31b49",
+    "database": "rentalcar",
+    "entities": ["./src/modules/**/infra/typeorm/entities/*.ts"],
+    "migrations": ["./src/shared/infra/typeorm/migrations/*.ts"],
+    "cli": {
+      "migrationsDir": "./src/shared/infra/typeorm/migrations"
+    }
+  },
+  {
+    "name": "mongo",
+    "type": "mongodb",
+    "host": "localhost",
+    "port": "27017",
+    "database": "rentalcar",
+    "useUnifiedTopology": true,
+    "entities": ["./src/modules/**/infra/typeorm/schemas/*.ts"]
+  }
+]

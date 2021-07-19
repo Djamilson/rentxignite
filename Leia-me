@@ -1,0 +1,218 @@
+$sudo yarn typeorm migration:run all
+$sudo yarn typeorm migration:revert
+
+
+$sudo yarn typeorm migration:create -n AddAddressIdPersons
+
+
+Craiado buttom Flutuante
+
+
+import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StatusBar, Animated, StyleSheet, BackHandler } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from 'styled-components';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { RectButton, PanGestureHandler } from 'react-native-gesture-handler';
+
+import Animatedd, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedGestureHandler,
+  withSpring,
+} from 'react-native-reanimated';
+
+import { CarDTO } from '../../dtos/CarDTO';
+import Logo from '../../assets/logo.svg';
+import { Car } from '../../components/Car';
+import { LoadAnimation } from '../../components/LoadAnimation';
+
+import api from '../../_services/api';
+
+const ButtonAnimated = Animatedd.createAnimatedComponent(RectButton);
+
+import {
+  Container,
+  Header,
+  HeaderContent,
+  TotalCars,
+  CarList,
+  MyCarsButton,
+} from './styles';
+
+const SPACING = 20;
+const AVATAR_SIZE = 70;
+const ITEM_SIZE = AVATAR_SIZE + SPACING * 3.8;
+
+const BG_IMG = 'https://freepngimg.com/thumb/audi/35227-5-audi-rs5-red.png';
+
+export function Home() {
+  const scrollY = React.useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
+  const theme = useTheme();
+
+  const positionY = useSharedValue(0);
+  const positionX = useSharedValue(0);
+
+  const myCarsButtonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: positionX.value },
+        { translateY: positionY.value },
+      ],
+    };
+  });
+
+  const onGestureEvent = useAnimatedGestureHandler({
+    onStart(_, ctx: any) {
+      ctx.positionX = positionX.value;
+      ctx.positionY = positionY.value;
+    },
+    onActive(event, ctx: any) {
+      positionX.value = ctx.positionX + event.translationX;
+      positionY.value = ctx.positionY + event.translationY;
+    },
+    onEnd() {
+      positionX.value = withSpring(0);
+      positionY.value = withSpring(0);
+    },
+  });
+
+  function handleCarDetails(car: CarDTO) {
+    navigation.navigate('CarDetails', { car });
+  }
+
+  function handleOpenCarMyCars() {
+    navigation.navigate('MyCars');
+  }
+  const [cars, setCars] = useState<CarDTO[]>([] as CarDTO[]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadCars(): Promise<void> {
+    try {
+      const res = await api.get('cars');
+      setCars(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadCars();
+  }, []);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true;
+    });
+  }, []);
+
+  return (
+    <Container>
+      <Header>
+        <HeaderContent>
+          <Logo width={RFValue(108)} height={RFValue(12)} />
+          {!loading && <TotalCars>Total de {cars.length} carros</TotalCars>}
+        </HeaderContent>
+      </Header>
+
+
+      <PanGestureHandler onGestureEvent={onGestureEvent}>
+        <Animatedd.View
+          style={[
+            myCarsButtonStyle,
+            {
+              position: 'absolute',
+              bottom: 13,
+              right: 22,
+            },
+          ]}
+        >
+          <ButtonAnimated
+            onPress={handleOpenCarMyCars}
+            style={[styles.button, { backgroundColor: theme.colors.main }]}
+          >
+            <Ionicons
+              name="ios-car-sport"
+              size={32}
+              color={theme.colors.shape}
+            />
+          </ButtonAnimated>
+        </Animatedd.View>
+      </PanGestureHandler>
+    </Container>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+
+
+
+import { RFValue } from 'react-native-responsive-fontsize';
+import styled from 'styled-components/native';
+
+import { Animated } from 'react-native';
+import { CarDTO } from '../../dtos/CarDTO';
+import { RectButton } from 'react-native-gesture-handler';
+
+export const Container = styled.View`
+  flex: 1;
+  background: ${({ theme }) => theme.colors.background_primary};
+`;
+
+export const Header = styled.View`
+  width: 100%;
+  height: 113px;
+  background: ${({ theme }) => theme.colors.header};
+  justify-content: flex-end;
+  padding: 32px 24px;
+`;
+
+export const HeaderContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const TotalCars = styled.Text`
+  font-size: ${RFValue(15)}px;
+  color: ${({ theme }) => theme.colors.text};
+  font-family: ${({ theme }) => theme.fonts.primary_400};
+`;
+
+export const CarList = styled(
+  Animated.FlatList as new () => Animated.FlatList<CarDTO>,
+).attrs({
+  contentContainerStyle: {
+    padding: 24,
+  },
+  showsHorizontalScrollIndicator: false,
+})`
+  padding: 0px 0px ${RFValue(16)}px;
+`;
+
+export const MyCarsButton = styled(RectButton)`
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  justify-content: center;
+  align-items: center;
+  background: ${({ theme }) => theme.colors.main};
+  position: absolute;
+  bottom: 13px;
+  right: 22px;
+`;
+      
+      
