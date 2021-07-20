@@ -27,6 +27,10 @@ const rentalSchema = tableSchema({
     },
 
     {
+      name: 'updated_at_',
+      type: 'string',
+    },
+    {
       name: 'car_name',
       type: 'string',
     },

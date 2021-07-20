@@ -101,21 +101,10 @@ export function Scheduling() {
     let start = !lastSelectedDate.timestamp ? date : lastSelectedDate;
     let end = date;
 
-    console.log('============');
-    console.log('=>>>Inicial date:', date);
-
-    console.log('=>>>My start:', start);
-    console.log('=>>>My End:', end);
-    console.log('============');
-
     if (start.timestamp > end.timestamp) {
       start = end;
       end = start;
     }
-
-    console.log('=>>>My start:', start);
-    console.log('=>>>My End:', end);
-    console.log('============');
 
     setLastSelectedDate(end);
     const interval = generateInterval(start, end);
@@ -123,13 +112,7 @@ export function Scheduling() {
 
     const firstDate = Object.keys(interval)[0];
 
-    console.log('=>>>My interval 0===>>:', Object.keys(interval)[0]);
-    console.log('=>>>My interval ===>>:', interval);
-    console.log('=>>>My firstDate:', firstDate);
-
     const endDate = Object.keys(interval)[Object.keys(interval).length - 1];
-
-    console.log('=>>>endDate:', endDate);
 
     const utcFirstDate = formatDate(firstDate);
     const utcEndDate = formatDate(endDate);

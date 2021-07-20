@@ -1,5 +1,5 @@
 import { Model } from '@nozbe/watermelondb';
-import { field } from '@nozbe/watermelondb/decorators';
+import { field, date } from '@nozbe/watermelondb/decorators';
 
 class Rental extends Model {
   static table = 'rentals';
@@ -18,6 +18,9 @@ class Rental extends Model {
 
   @field('total')
   total!: number;
+
+  @date('updated_at_')
+  updated_at_!: string;
 
   @field('car_name')
   car_name!: string;
@@ -54,7 +57,6 @@ class Rental extends Model {
 
   @field('car_thumbnail')
   car_thumbnail!: string;
-
 
   @field('car_photo_url')
   car_photo_url!: string;
