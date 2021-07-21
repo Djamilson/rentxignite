@@ -13,6 +13,9 @@ class Rental extends Model {
   @field('start_date')
   start_date!: string;
 
+  @field('end_date')
+  end_date!: string;
+
   @field('expected_return_date')
   expected_return_date!: string;
 

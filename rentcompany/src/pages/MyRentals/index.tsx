@@ -113,16 +113,11 @@ export function MyRentals() {
       .then(async (res) => {
         await synchronize({
           database,
-          pullChanges: async ({ lastPulledAt }) => {
+          pullChanges: async () => {
             try {
-              console.log('=>>>>><<<', res);
-
-              const { data } = await api.get(
-                `rentals/sync/pull?lastPulledVersion=${lastPulledAt || 0}`,
-                {
-                  params: { rentals: JSON.stringify(res) },
-                },
-              );
+              const { data } = await api.get(`rentals/sync/pull`, {
+                params: { rentals: JSON.stringify(res) },
+              });
 
               const { changes, latestVersion } = data;
               console.log('Quer ### Vindo do Banco rental', data);
@@ -157,9 +152,11 @@ export function MyRentals() {
                   id: item.id,
                   car_id: item.car_id,
                   start_date: item.start_date,
+                  end_date: String(item.end_date),
                   expected_return_date: item.expected_return_date,
                   status: item.status,
                   total: item.total,
+
                   updated_at_: item.updated_at_,
                   car_name: item.car_name,
                   car_brand: item.car_brand,

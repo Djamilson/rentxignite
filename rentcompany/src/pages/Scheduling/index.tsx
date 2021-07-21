@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'styled-components';
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { format } from 'date-fns';
 
@@ -76,7 +76,10 @@ export function Scheduling() {
       const intervalDisabled = generateDateDisabled(res.data);
 
       setMarkedDatesDisabled(intervalDisabled);
-    } catch {
+    } catch (error) {
+      navigation.goBack();
+      Alert.alert('Tivemos uma falhas!', 'Tente novamente!');
+      console.log('=>>: carremento', error);
     } finally {
       setLoading(false);
     }

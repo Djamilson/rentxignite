@@ -8,6 +8,11 @@ const rentalSchema = tableSchema({
       type: 'string',
     },
     {
+      name: 'end_date',
+      type: 'string',
+      isOptional: true,
+    },
+    {
       name: 'car_id',
       type: 'string',
     },

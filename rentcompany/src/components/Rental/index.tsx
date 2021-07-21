@@ -29,6 +29,7 @@ export function Rental({ data, ...rest }: IProps) {
       <Details>
         <Brand>{data.car_brand}</Brand>
         <Name>{data.car_name}</Name>
+        <Name>{data.status}</Name>
 
         <About>
           <Rent>
