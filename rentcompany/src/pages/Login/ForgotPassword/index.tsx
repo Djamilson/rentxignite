@@ -17,11 +17,13 @@ import * as Yup from 'yup';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNetInfo } from '@react-native-community/netinfo';
 
-import { BackButton } from '../../components/BackButton';
-import { Input } from '../../components/Input';
-import { PasswordInput } from '../../components/PasswordInput';
-import { Button } from '../../components/Button';
-import { useAuth } from '../../hooks/auth';
+import { BackButton } from '../../../components/BackButton';
+import { Input } from '../../../components/Input';
+import { PasswordInput } from '../../../components/PasswordInput';
+import { Button } from '../../../components/Button';
+import { useAuth } from '../../../hooks/auth';
+
+import { api } from '../../../_services/apiClient';
 
 import {
   Container,
@@ -41,12 +43,12 @@ import {
   Footer,
   OffLineInfo,
 } from './styles';
-import { api } from '../../_services/apiClient';
 
-function Profile() {
+function ForgotPassword() {
   const { user, signOut, updateUser } = useAuth();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState('');
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit');
   const [avatar, setAvatar] = useState(user.person_avatar);
   const [name, setName] = useState(user.person_name);
@@ -113,31 +115,14 @@ function Profile() {
     }
   }
 
-  async function handlerProfileUpdate() {
+  async function handlerForgotPasswordUpdate() {
     try {
       const schema = Yup.object().shape({
-        driverLicense: Yup.string().required('CNH é obrigatória'),
-        name: Yup.string().required('Nome é obrigatório'),
+        email: Yup.string().required('CNH é obrigatória'),
       });
-      const data = { name, driverLicense };
+      const data = { email };
       await schema.validate(data);
 
-      updateUser({
-        id: user.id,
-        user_id: user.user_id,
-        person_email: user.person_email,
-        person_name: name,
-        person_driver_license: driverLicense,
-        person_avatar: avatar,
-        person_avatar_url: avatar,
-
-        person_status: user.person_status,
-        person_privacy: user.person_privacy,
-        person_id: user.person_id,
-
-        token: user.token,
-        refreshToken: user.refreshToken,
-      });
 
       Alert.alert('Sucesso!', 'Perfil atualizado.');
     } catch {
@@ -145,50 +130,6 @@ function Profile() {
         'Atenção!',
         'Não foi possível fazer a alteração, tente novamente.',
       );
-    }
-  }
-
-  async function handlerPasswordUpdate() {
-    try {
-      const schema = Yup.object().shape({
-        old_password: Yup.string(),
-        password: Yup.string().when('old_password', {
-          is: (val: any) => !!val.length,
-          then: Yup.string().required('Campo obrigatório'),
-          otherwise: Yup.string(),
-        }),
-        password_confirmation: Yup.string()
-          .when('old_password', {
-            is: (val: any) => !!val.length,
-            then: Yup.string().required('Campo obrigatório'),
-            otherwise: Yup.string(),
-          })
-          .oneOf([Yup.ref('password'), 'null'], 'Confirmação incorreta'),
-      });
-      const data = {
-        old_password: oldPassword,
-        password,
-        password_confirmation: confirmPassword,
-      };
-
-      await schema.validate(data);
-
-      await api.put('/profiles/passwords', data);
-
-      Alert.alert('Sucesso!', 'Perfil atualizado.');
-
-      setOldPassword('');
-      setPassword('');
-      setConfirmPassword('');
-    } catch (error) {
-      if (error instanceof Yup.ValidationError) {
-        Alert.alert('Ooops!', error.message);
-      } else {
-        Alert.alert(
-          'Error na alteração!',
-          'Ocorreu um erro ao tetar fazer alteração de senha, tente novamente',
-        );
-      }
     }
   }
 
@@ -202,7 +143,7 @@ function Profile() {
         <Header>
           <HeaderTop>
             <BackButton color={theme.colors.shape} onPress={handleBack} />
-            <HeaderTitle> Editar Perfil</HeaderTitle>
+            <HeaderTitle> Recuperação de senha</HeaderTitle>
             <LogoutButton onPress={handleSignOut}>
               <Feather name="power" size={24} color={theme.colors.shape} />
             </LogoutButton>
@@ -212,22 +153,6 @@ function Profile() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <PhotoContainerView>
-            <PhotoContainer>
-              {!!avatar && (
-                <Photo
-                  source={{
-                    uri: avatar,
-                  }}
-                />
-              )}
-
-              <PhotoButton onPress={handleAvatarSelect}>
-                <Feather name="camera" size={24} color={theme.colors.shape} />
-              </PhotoButton>
-            </PhotoContainer>
-          </PhotoContainerView>
-
           <Container>
             <Content
               style={{
@@ -241,7 +166,7 @@ function Profile() {
                   active={option === 'dataEdit'}
                 >
                   <OptionTitle active={option === 'dataEdit'}>
-                    Dados
+                    Email
                   </OptionTitle>
                 </Option>
                 <Option
@@ -249,7 +174,7 @@ function Profile() {
                   active={option === 'passwordEdit'}
                 >
                   <OptionTitle active={option === 'passwordEdit'}>
-                    Trocar senha
+                    Já tenho o código de redefinição
                   </OptionTitle>
                 </Option>
               </Options>
@@ -257,30 +182,15 @@ function Profile() {
                 <>
                   <Section>
                     <Input
-                      iconName="user"
-                      placeholder="Nome"
-                      autoCorrect={false}
-                      defaultValue={user.person_name}
-                      onChangeText={(e: any) => setName(e)}
-                    />
-                    <Input
                       iconName="mail"
                       editable={false}
-                      defaultValue={user.person_email}
-                    />
-
-                    <Input
-                      iconName="credit-card"
-                      placeholder="CNH"
-                      onChangeText={(e: any) => setDriverLicense(e)}
-                      keyboardType="numeric"
-                      defaultValue={user.person_driver_license}
+                      onChangeText={(e: any) => setEmail(e)}
                     />
                   </Section>
                   <Footer>
                     <Button
-                      title="Salvar alterações"
-                      onPress={handlerProfileUpdate}
+                      title="Solicitar"
+                      onPress={handlerForgotPasswordUpdate}
                       loading={loading}
                       enabled={!loading}
                     />
@@ -294,16 +204,6 @@ function Profile() {
                       placeholder="Senha atual"
                       onChangeText={(e: any) => setOldPassword(e)}
                     />
-                    <PasswordInput
-                      iconName="lock"
-                      placeholder="Nova senha"
-                      onChangeText={(e: any) => setPassword(e)}
-                    />
-                    <PasswordInput
-                      iconName="lock"
-                      placeholder="Confirma senha"
-                      onChangeText={(e: any) => setConfirmPassword(e)}
-                    />
                   </Section>
 
                   <Footer>
@@ -311,13 +211,13 @@ function Profile() {
                       title="Salvar alterações"
                       enabled={netInfo.isConnected === true}
                       loading={loading}
-                      onPress={handlerPasswordUpdate}
+                      onPress={handlerForgotPasswordUpdate}
                     />
 
                     {netInfo.isConnected === false && (
                       <OffLineInfo>
-                        Conecte-se a Internet para ver mais detalhes e agendar
-                        seu carro!
+                        Conecte-se a Internet para ver fazer a solicitação de
+                        recuperação de senha!
                       </OffLineInfo>
                     )}
                   </Footer>
@@ -331,4 +231,4 @@ function Profile() {
   );
 }
 
-export { Profile };
+export { ForgotPassword };

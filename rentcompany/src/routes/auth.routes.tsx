@@ -4,9 +4,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Confirmation } from '../pages/Confirmation';
 import { Splash } from '../pages/Splash';
-import { SignIn } from '../pages/SignIn';
-import { SignUpFirstStep } from '../pages/SignUp/SignUpFirstStep';
-import { SignUpSecondStep } from '../pages/SignUp/SignUpSecondStep';
+import { SignIn } from '../pages/Login/SignIn';
+
+import { ForgotPassword } from '../pages/Login/ForgotPassword';
+
+import { SignUpFirstStep } from '../pages/Login/SignUp/SignUpFirstStep';
+import { SignUpSecondStep } from '../pages/Login/SignUp/SignUpSecondStep';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -18,6 +21,8 @@ export function AuthRoutes() {
       <Screen name="SignUpFirstStep" component={SignUpFirstStep} />
       <Screen name="SignUpSecondStep" component={SignUpSecondStep} />
       <Screen name="Confirmation" component={Confirmation} />
+
+      <Screen name="ForgotPassword" component={ForgotPassword} />
     </Navigator>
   );
 }

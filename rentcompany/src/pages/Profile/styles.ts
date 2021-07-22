@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components/native';
 import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 interface IOptionsProps {
@@ -112,3 +115,16 @@ export const OptionTitle = styled.Text<IOptionsProps>`
 `;
 
 export const Section = styled.View``;
+
+export const Footer = styled.View`
+  width: 100%;
+  padding: 24px 0px;
+  padding-bottom: ${getBottomSpace() + 24}px;
+`;
+
+export const OffLineInfo = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.primary_400};
+  color: ${({ theme }) => theme.colors.main};
+  font-size: ${RFValue(10)}px;
+  text-align: center;
+`;

@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-
-import { useAuth } from '../../hooks/auth';
 import * as Yup from 'yup';
 
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import { PasswordInput } from '../../components/PasswordInput';
+import { useAuth } from '../../../hooks/auth';
+
+import { Button } from '../../../components/Button';
+import { Input } from '../../../components/Input';
+import { PasswordInput } from '../../../components/PasswordInput';
 
 import {
   Container,

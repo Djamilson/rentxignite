@@ -3,9 +3,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import * as Yup from 'yup';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Input } from '../../../components/Input';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Input } from '../../../../components/Input';
+
+import { Button } from '../../../../components/Button';
 
 import {
   KeyboardAvoidingView,
@@ -22,7 +24,6 @@ import {
   FormTitle,
   Steps,
 } from './styles';
-import { Button } from '../../../components/Button';
 
 export function SignUpFirstStep() {
   const [name, setName] = useState('');
