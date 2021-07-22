@@ -58,11 +58,8 @@ export function Home() {
               });
 
               const { changes, latestVersion } = data;
-              console.log('Quer ### Vindo do Banco', changes);
               return { changes, timestamp: latestVersion };
             } catch (error) {
-              console.log('Estou na home:', error.message);
-              console.log('=>>>>> Home', error.response.data);
               throw new Error(error);
             }
           },
@@ -82,8 +79,7 @@ export function Home() {
                 await api.post('users/mobiles/sync', user);
               }
             } catch (error) {
-              console.log('=>>> Estou pronto Home!!', error.message);
-              console.log('=>>> Estou pronto Home 2!!', error);
+              throw new Error(error);
             }
           },
         });
@@ -118,14 +114,9 @@ export function Home() {
   }, [flagUpdateCars]);
 
   useEffect(() => {
-    let isMounted = true;
-
     if (netInfo.isConnected === true) {
       offLineSynchronize();
     }
-    return () => {
-      isMounted = false;
-    };
   }, [netInfo.isConnected]);
 
   return (

@@ -40,7 +40,7 @@ export const LogoutButton = styled(BorderlessButton)``;
 export const PhotoContainerView = styled.View`
   margin-top: 0;
   width: 100%;
-  height: ${RFValue(90)}px;
+  height: ${RFValue(150)}px;
 
   background-color: ${({ theme }) => theme.colors.header};
   padding: 0 24px;

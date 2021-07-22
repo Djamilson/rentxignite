@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 import {
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
+  ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components';
@@ -27,6 +27,7 @@ import {
   HeaderTop,
   HeaderTitle,
   LogoutButton,
+  PhotoContainerView,
   PhotoContainer,
   Photo,
   PhotoButton,
@@ -133,17 +134,26 @@ function Profile() {
   }
 
   return (
-    <KeyboardAvoidingView behavior="position" enabled>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container>
-          <Header>
-            <HeaderTop>
-              <BackButton color={theme.colors.shape} onPress={handleBack} />
-              <HeaderTitle> Editar Perfil</HeaderTitle>
-              <LogoutButton onPress={handleSignOut}>
-                <Feather name="power" size={24} color={theme.colors.shape} />
-              </LogoutButton>
-            </HeaderTop>
+    <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        enabled
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <Header>
+          <HeaderTop>
+            <BackButton color={theme.colors.shape} onPress={handleBack} />
+            <HeaderTitle> Editar Perfil</HeaderTitle>
+            <LogoutButton onPress={handleSignOut}>
+              <Feather name="power" size={24} color={theme.colors.shape} />
+            </LogoutButton>
+          </HeaderTop>
+        </Header>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <PhotoContainerView>
             <PhotoContainer>
               {!!avatar && (
                 <Photo
@@ -157,67 +167,74 @@ function Profile() {
                 <Feather name="camera" size={24} color={theme.colors.shape} />
               </PhotoButton>
             </PhotoContainer>
-          </Header>
+          </PhotoContainerView>
 
-          <Content
-            style={{
-              marginTop: useBottomTabBarHeight(),
-              paddingBottom: RFValue(50),
-            }}
-          >
-            <Options>
-              <Option
-                onPress={() => handleOptionChange('dataEdit')}
-                active={option === 'dataEdit'}
-              >
-                <OptionTitle active={option === 'dataEdit'}>Dados</OptionTitle>
-              </Option>
-              <Option
-                onPress={() => handleOptionChange('passwordEdit')}
-                active={option === 'passwordEdit'}
-              >
-                <OptionTitle active={option === 'passwordEdit'}>
-                  Trocar senha
-                </OptionTitle>
-              </Option>
-            </Options>
-            {option === 'dataEdit' ? (
-              <Section>
-                <Input
-                  iconName="user"
-                  placeholder="Nome"
-                  autoCorrect={false}
-                  defaultValue={user.person_name}
-                  onChangeText={(e: any) => setName(e)}
-                />
-                <Input
-                  iconName="mail"
-                  editable={false}
-                  defaultValue={user.person_email}
-                />
+          <Container>
+            <Content
+              style={{
+                marginTop: useBottomTabBarHeight() + RFValue(90),
+                paddingBottom: RFValue(50),
+              }}
+            >
+              <Options>
+                <Option
+                  onPress={() => handleOptionChange('dataEdit')}
+                  active={option === 'dataEdit'}
+                >
+                  <OptionTitle active={option === 'dataEdit'}>
+                    Dados
+                  </OptionTitle>
+                </Option>
+                <Option
+                  onPress={() => handleOptionChange('passwordEdit')}
+                  active={option === 'passwordEdit'}
+                >
+                  <OptionTitle active={option === 'passwordEdit'}>
+                    Trocar senha
+                  </OptionTitle>
+                </Option>
+              </Options>
+              {option === 'dataEdit' ? (
+                <Section>
+                  <Input
+                    iconName="user"
+                    placeholder="Nome"
+                    autoCorrect={false}
+                    defaultValue={user.person_name}
+                    onChangeText={(e: any) => setName(e)}
+                  />
+                  <Input
+                    iconName="mail"
+                    editable={false}
+                    defaultValue={user.person_email}
+                  />
 
-                <Input
-                  iconName="credit-card"
-                  placeholder="CNH"
-                  onChangeText={(e: any) => setDriverLicense(e)}
-                  keyboardType="numeric"
-                  defaultValue={user.person_driver_license}
-                />
-              </Section>
-            ) : (
-              <Section>
-                <PasswordInput iconName="lock" placeholder="Senha atual" />
+                  <Input
+                    iconName="credit-card"
+                    placeholder="CNH"
+                    onChangeText={(e: any) => setDriverLicense(e)}
+                    keyboardType="numeric"
+                    defaultValue={user.person_driver_license}
+                  />
+                </Section>
+              ) : (
+                <Section>
+                  <PasswordInput iconName="lock" placeholder="Senha atual" />
 
-                <PasswordInput iconName="lock" placeholder="Nova senha" />
+                  <PasswordInput iconName="lock" placeholder="Nova senha" />
 
-                <PasswordInput iconName="lock" placeholder="Confirma senha" />
-              </Section>
-            )}
-            <Button title="Salvar alterações" onPress={handlerProfileUpdate} />
-          </Content>
-        </Container>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+                  <PasswordInput iconName="lock" placeholder="Confirma senha" />
+                </Section>
+              )}
+              <Button
+                title="Salvar alterações"
+                onPress={handlerProfileUpdate}
+              />
+            </Content>
+          </Container>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

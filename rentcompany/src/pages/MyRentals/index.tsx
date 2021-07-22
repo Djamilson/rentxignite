@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+
 import { StyleSheet, StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
 
@@ -41,26 +38,17 @@ import {
   Details,
   Description,
   Brand,
-  Name,
-  Rent,
+  RentalView,
   Period,
   Price,
-  About,
-  Accessories,
-  Footer,
-  OffLineInfo,
   Title,
+  RentalList,
   SubTitle,
-  Content,
-  Appointments,
-  AppointmentsTitle,
-  AppointmentsQuantity,
-  CarList,
-  CarWrapper,
-  CarFooter,
-  CarFooterTitle,
-  CarFooterPeriod,
-  CarFooterDate,
+  RentalWrapper,
+  RentalFooter,
+  RentalFooterTitle,
+  RentalFooterPeriod,
+  RentalFooterDate,
 } from './styles';
 
 export function MyRentals() {
@@ -129,7 +117,6 @@ export function MyRentals() {
               });
 
               const { changes, latestVersion } = data;
-              console.log('Quer ### Vindo do Banco rental', data);
 
               return { changes, timestamp: latestVersion };
             } catch (error) {
@@ -255,19 +242,19 @@ export function MyRentals() {
             <Brand>Agendamentos feitos</Brand>
           </Description>
 
-          <Rent>
+          <RentalView>
             <Period>Qauntidade</Period>
             <Price>{rentals.length}</Price>
-          </Rent>
+          </RentalView>
         </Details>
 
         {loading ? (
           <LoadAnimation />
         ) : (
-          <CarList
+          <RentalList
             data={rentals}
             keyExtractor={(item) => String(item.id)}
-            renderItem={({ item, index }) => {
+            renderItem={({ item }) => {
               return (
                 <Animated.View
                   style={{
@@ -280,14 +267,14 @@ export function MyRentals() {
                     shadowRadius: 10,
                   }}
                 >
-                  <CarWrapper key={item.id}>
+                  <RentalWrapper key={item.id}>
                     <Rental data={item} />
-                    <CarFooter>
-                      <CarFooterTitle>Período</CarFooterTitle>
-                      <CarFooterPeriod>
-                        <CarFooterDate>
+                    <RentalFooter>
+                      <RentalFooterTitle>Período</RentalFooterTitle>
+                      <RentalFooterPeriod>
+                        <RentalFooterDate>
                           {item.start_date_formated}
-                        </CarFooterDate>
+                        </RentalFooterDate>
 
                         <AntDesign
                           name="arrowright"
@@ -296,12 +283,12 @@ export function MyRentals() {
                           style={{ marginHorizontal: RFValue(10) }}
                         />
 
-                        <CarFooterDate>
+                        <RentalFooterDate>
                           {item.expected_return_date_formated}
-                        </CarFooterDate>
-                      </CarFooterPeriod>
-                    </CarFooter>
-                  </CarWrapper>
+                        </RentalFooterDate>
+                      </RentalFooterPeriod>
+                    </RentalFooter>
+                  </RentalWrapper>
                 </Animated.View>
               );
             }}

@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Alert, TextInput, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import * as Yup from 'yup';
 
 import { BackButton } from '../../../components/BackButton';
@@ -29,8 +29,6 @@ export function SignUpFirstStep() {
   const [email, setEmail] = useState('');
   const [driverLicense, setDriverLicense] = useState('');
   const nameGroup = 'role-client';
-
-  const emailInputRef = useRef<TextInput>(null);
 
   const navigation = useNavigation();
 

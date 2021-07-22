@@ -78,8 +78,7 @@ export function Scheduling() {
       setMarkedDatesDisabled(intervalDisabled);
     } catch (error) {
       navigation.goBack();
-      Alert.alert('Tivemos uma falhas!', 'Tente novamente!');
-      console.log('=>>: carremento', error);
+      Alert.alert('Tivemos uma falha!', 'Tente novamente!');
     } finally {
       setLoading(false);
     }
