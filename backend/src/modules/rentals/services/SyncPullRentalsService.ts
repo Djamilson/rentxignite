@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { Rental } from '../infra/typeorm/entities/Rental';
 import { IRentalsRepository } from '../repositories/IRentalsRepository';
+
 interface IRes {
   id: string;
   updated_at_: string;
@@ -45,6 +46,36 @@ interface IResponseData {
   deleted: [];
 }
 
+function rentalX(rental: Rental): IResRental {
+  return {
+    id: rental.id,
+    car_id: rental.car_id,
+    user_id: rental.user_id,
+    status: rental.status,
+    start_date: rental.start_date,
+    end_date: rental.end_date,
+    expected_return_date: rental.expected_return_date,
+
+    total: Number(rental.total),
+    canceled_at: rental.canceled_at,
+    created_at: rental.created_at,
+    updated_at_: rental.updated_at,
+
+    car_name: rental.car.name,
+    car_brand: rental.car.brand,
+    car_about: rental.car.about,
+    car_daily_rate: Number(rental.car.daily_rate),
+    car_fine_amount: Number(rental.car.fine_amount),
+    car_period: rental.car.period,
+    car_price: rental.car.price,
+    car_fuel_type: rental.car.fuel_type,
+    car_category_id: rental.car.category.id,
+    car_category_name: rental.car.category.name,
+    car_category_description: rental.car.category.description,
+    car_thumbnail: rental.car.photo.photo,
+    car_photo_url: rental.car.photo.getAvatarUrl(),
+  };
+}
 @injectable()
 class SyncPullRentalsService {
   constructor(
@@ -86,67 +117,9 @@ class SyncPullRentalsService {
       });
     }
 
-    onlyNews = flagOnlyNews?.map(rental => {
-      return {
-        id: rental.id,
-        car_id: rental.car_id,
-        user_id: rental.user_id,
-        status: rental.status,
-        start_date: rental.start_date,
-        end_date: rental.end_date,
-        expected_return_date: rental.expected_return_date,
+    onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
+    onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
 
-        total: Number(rental.total),
-        canceled_at: rental.canceled_at,
-        created_at: rental.created_at,
-        updated_at_: rental.updated_at,
-
-        car_name: rental.car.name,
-        car_brand: rental.car.brand,
-        car_about: rental.car.about,
-        car_daily_rate: Number(rental.car.daily_rate),
-        car_fine_amount: Number(rental.car.fine_amount),
-        car_period: rental.car.period,
-        car_price: rental.car.price,
-        car_fuel_type: rental.car.fuel_type,
-        car_category_id: rental.car.category.id,
-        car_category_name: rental.car.category.name,
-        car_category_description: rental.car.category.description,
-        car_thumbnail: rental.car.photo.photo,
-        car_photo_url: rental.car.photo.getAvatarUrl(),
-      };
-    });
-
-    onlyUpdated = flagOnlyUpdated?.map(rental => {
-      return {
-        id: rental.id,
-        car_id: rental.car_id,
-        user_id: rental.user_id,
-        status: rental.status,
-        start_date: rental.start_date,
-        end_date: rental.end_date,
-        expected_return_date: rental.expected_return_date,
-
-        total: Number(rental.total),
-        canceled_at: rental.canceled_at,
-        created_at: rental.created_at,
-        updated_at_: rental.updated_at,
-
-        car_name: rental.car.name,
-        car_brand: rental.car.brand,
-        car_about: rental.car.about,
-        car_daily_rate: Number(rental.car.daily_rate),
-        car_fine_amount: Number(rental.car.fine_amount),
-        car_period: rental.car.period,
-        car_price: rental.car.price,
-        car_fuel_type: rental.car.fuel_type,
-        car_category_id: rental.car.category.id,
-        car_category_name: rental.car.category.name,
-        car_category_description: rental.car.category.description,
-        car_thumbnail: rental.car.photo.photo,
-        car_photo_url: rental.car.photo.getAvatarUrl(),
-      };
-    });
     return {
       created: onlyNews || [],
       updated: onlyUpdated || [],

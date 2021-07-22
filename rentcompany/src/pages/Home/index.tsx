@@ -35,44 +35,59 @@ export function Home() {
   const [flagUpdateCars, setFlagUpdateCars] = useState(0);
 
   async function offLineSynchronize() {
-    await synchronize({
-      database,
-      pullChanges: async ({ lastPulledAt }) => {
-        try {
-          const { data } = await api.get(
-            `cars/sync/pull?lastPulledVersion=${lastPulledAt || 0}`,
-          );
+    const carCollection = database.get<ModelCar>('cars');
 
-          const { changes, latestVersion } = data;
-          console.log('Quer ### Vindo do Banco', changes);
-          return { changes, timestamp: latestVersion };
-        } catch (error) {
-          console.log('Estou na home:', error.message);
-          console.log('=>>>>> Home', error.response.data);
-          throw new Error(error);
-        }
-      },
-      pushChanges: async ({ changes }) => {
-        try {
-          const userMe = changes.users;
+    await carCollection
+      .query()
+      .fetch()
+      .then((item) => {
+        return item?.map((item: any) => {
+          return {
+            id: item.id,
+            updated_at_: item._raw.updated_at_,
+          };
+        });
+      })
+      .then(async (res) => {
+        await synchronize({
+          database,
+          pullChanges: async ({}) => {
+            try {
+              const { data } = await api.get(`cars/sync/pull`, {
+                params: { rentals: JSON.stringify(res) },
+              });
 
-          if (userMe?.updated.length > 0) {
-            const user = {
-              user_id: userMe.updated[0].user_id,
-              name: userMe.updated[0].person_name,
-              driver_license: userMe.updated[0].person_driver_license,
-              avatar: userMe.updated[0].person_avatar,
-              privacy: userMe.updated[0]._privacy,
-            };
+              const { changes, latestVersion } = data;
+              console.log('Quer ### Vindo do Banco', changes);
+              return { changes, timestamp: latestVersion };
+            } catch (error) {
+              console.log('Estou na home:', error.message);
+              console.log('=>>>>> Home', error.response.data);
+              throw new Error(error);
+            }
+          },
+          pushChanges: async ({ changes }) => {
+            try {
+              const userMe = changes.users;
 
-            await api.post('users/mobiles/sync', user);
-          }
-        } catch (error) {
-          console.log('=>>> Estou pronto Home!!', error.message);
-          console.log('=>>> Estou pronto Home 2!!', error);
-        }
-      },
-    });
+              if (userMe?.updated.length > 0) {
+                const user = {
+                  user_id: userMe.updated[0].user_id,
+                  name: userMe.updated[0].person_name,
+                  driver_license: userMe.updated[0].person_driver_license,
+                  avatar: userMe.updated[0].person_avatar,
+                  privacy: userMe.updated[0]._privacy,
+                };
+
+                await api.post('users/mobiles/sync', user);
+              }
+            } catch (error) {
+              console.log('=>>> Estou pronto Home!!', error.message);
+              console.log('=>>> Estou pronto Home 2!!', error);
+            }
+          },
+        });
+      });
 
     setFlagUpdateCars(flagUpdateCars + 1);
   }

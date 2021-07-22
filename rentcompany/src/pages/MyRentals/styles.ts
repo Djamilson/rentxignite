@@ -12,42 +12,40 @@ import { RFValue } from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.background_primary};
 `;
 
 export const Header = styled.View`
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  background-color: ${({ theme }) => theme.colors.header};
+
+  margin-top: ${getStatusBarHeight() + RFValue(30)}px;
+
+  width: 100%;
+
+  height: 50px;
+  margin-left: 24px;
+
+  justify-content: center;
+`;
+
+export const HeaderSub = styled.View`
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
 
   background-color: ${({ theme }) => theme.colors.header};
 
   position: absolute;
 
-  margin-top: ${getStatusBarHeight() + 18}px;
-  margin-left: 24px;
-  height: 230px;
-
-  z-index: 99;
-
   width: 100%;
-  height: 325px;
 
   justify-content: center;
-  padding: 25px;
+  margin: 0;
+  margin-top: ${RFValue(15)}px;
 `;
-
-/*
-export const Header = styled.View`
-  width: 100%;
-  height: 230px;
-
-  background-color: ${({ theme }) => theme.colors.header};
-
-  justify-content: center;
-  padding: 25px;
-  padding-top: ${getStatusBarHeight() + 30}px;
-`;*/
 
 export const Content = styled.ScrollView.attrs({
   contentContainerStyle: {
@@ -176,7 +174,7 @@ export const CarList = styled(
   Animated.FlatList as new () => Animated.FlatList<IRentalDTO>,
 ).attrs({
   contentContainerStyle: {
-    padding: 16,
+    padding: 0,
   },
   showsVerticalScrollIndicator: false,
 })`

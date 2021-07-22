@@ -8,10 +8,20 @@ class SyncPullCarsController {
     try {
       const syncPullCar = container.resolve(SyncPullCarsService);
 
-      const { lastPulledVersion } = req.query;
+      const { rentals } = req.query;
+
+      const p = (rentals as unknown) as string;
 
       const syncPullCars = await syncPullCar.execute({
-        lastPulledVersion: Number(lastPulledVersion),
+        cars:
+          p.length < 3
+            ? []
+            : p
+                .replace('[', '')
+                .replace(']', '')
+                .replace(/},{/g, '}},{{')
+                .split('},{')
+                .map(item => JSON.parse(item)),
       });
 
       return res.json({

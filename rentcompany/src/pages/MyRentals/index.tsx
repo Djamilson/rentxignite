@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import { StyleSheet, StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
 
@@ -34,6 +37,7 @@ import { Rental as ModelRental } from '../../database/model/Rental';
 import {
   Container,
   Header,
+  HeaderSub,
   Details,
   Description,
   Brand,
@@ -78,10 +82,15 @@ export function MyRentals() {
 
   const headerStyleAnimation = useAnimatedStyle(() => {
     return {
+      //aqui muda a distâcia entre o header e o ScrollView
+      //260 distância do top até inicio do scrollView
+
+      //100 largura do meu header final
+
       height: interpolate(
         scrollY.value,
-        [0, 200],
-        [200, 70],
+        [0, 260],
+        [260, 112],
         Extrapolate.CLAMP,
       ),
     };
@@ -203,10 +212,11 @@ export function MyRentals() {
   return (
     <Container>
       <StatusBar
-        barStyle="dark-content"
+        barStyle="light-content"
         translucent
         backgroundColor="transparent"
       />
+
       <Animated.View
         style={[
           headerStyleAnimation,
@@ -216,23 +226,25 @@ export function MyRentals() {
           },
         ]}
       >
-        <Animated.View style={sliderCarsStyleAnimation}>
-          <Header>
-            <BackButton onPress={handleBack} color={theme.colors.shape} />
-            <Title>
-              Meus{'\n'}
-              agendamentos
-            </Title>
+        <Header>
+          <BackButton onPress={handleBack} color={theme.colors.shape} />
 
-            <SubTitle>Conforto, segurança e praticidade.</SubTitle>
-          </Header>
-        </Animated.View>
+          <Animated.View style={sliderCarsStyleAnimation}>
+            <HeaderSub>
+              <Title>
+                Meus{'\n'}
+                agendamentos
+              </Title>
+
+              <SubTitle>Conforto, segurança e praticidade.</SubTitle>
+            </HeaderSub>
+          </Animated.View>
+        </Header>
       </Animated.View>
 
       <Animated.ScrollView
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: getStatusBarHeight() + 160,
         }}
         showsVerticalScrollIndicator={false}
         onScroll={scrolHandler}
@@ -295,22 +307,17 @@ export function MyRentals() {
             }}
           />
         )}
-
-        <About>uu</About>
       </Animated.ScrollView>
-
-      <Footer></Footer>
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    position: 'absolute',
     overflow: 'hidden',
     zIndex: 1,
   },
   back: {
-    marginTop: 24,
+    marginTop: 0,
   },
 });

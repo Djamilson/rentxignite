@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 import * as Device from 'expo-device';
 
@@ -6,9 +6,6 @@ import { database } from '../database';
 import { User as ModelUser } from '../database/model/User';
 
 const device = Device.modelName;
-
-let isRefreshing = false;
-let failedRequestsQueue = [];
 
 import localhostConfig from '../_config/host';
 

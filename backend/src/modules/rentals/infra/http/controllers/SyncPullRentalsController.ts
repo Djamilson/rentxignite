@@ -13,8 +13,6 @@ class SyncPullRentalsController {
 
       const p = (rentals as unknown) as string;
 
-      console.log('PPasd', p.length);
-
       const syncPullRentals = await syncPullCar.execute({
         user_id,
         rentals:

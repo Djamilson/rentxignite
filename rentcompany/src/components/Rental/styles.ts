@@ -25,6 +25,13 @@ export const Brand = styled.Text`
   text-transform: uppercase;
 `;
 
+
+export const Status = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.secondary_500};
+  color: ${({ theme }) => theme.colors.title};
+  font-size: ${RFValue(10)}px;
+`;
+
 export const Name = styled.Text`
   font-family: ${({ theme }) => theme.fonts.secondary_500};
   color: ${({ theme }) => theme.colors.title};
