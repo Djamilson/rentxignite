@@ -23,4 +23,6 @@ export interface CarDTO {
   photo: Photo;
   specifications: Specification[];
   photos: { id: string; photo: string }[];
+
+  updated_at_: string;
 }

@@ -9,12 +9,12 @@ import {
   Alert,
 } from 'react-native';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Button } from '../../../components/Button';
-import { PasswordInput } from '../../../components/PasswordInput';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Button } from '../../../../components/Button';
+import { PasswordInput } from '../../../../components/PasswordInput';
 
-import { api } from '../../../_services/apiClient';
+import { api } from '../../../../_services/apiClient';
 
 import {
   Container,

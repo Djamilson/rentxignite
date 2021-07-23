@@ -6734,6 +6734,11 @@ react-native-calendars@^1.1264.0:
   optionalDependencies:
     moment "^2.24.0"
 
+react-native-confirmation-code-field@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-7.1.0.tgz#2394e80ad399cbbcfc7f87bb2eb8bc34eaa43a55"
+  integrity sha512-cGE36gnyQR9inqQwHghPhBiMj8PZOmW4n/bUtv+xnDxf4/gTv7ga6v3DSCREfQXRyeCmHZ7iRzj7diJzAgvxFg==
+
 react-native-dotenv@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/react-native-dotenv/-/react-native-dotenv-3.1.1.tgz#03fa95f6a4a883a7975a7a936e5de319ed638253"

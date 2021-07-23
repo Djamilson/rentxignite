@@ -9,12 +9,21 @@ class SyncPullRentalsController {
       const user_id = req.user.id;
       const syncPullCar = container.resolve(SyncPullRentalsService);
 
-      const { lastPulledVersion } = req.query;
-      console.log('lastPulledVersion>>>>', lastPulledVersion);
+      const { rentals } = req.query;
+
+      const p = (rentals as unknown) as string;
 
       const syncPullRentals = await syncPullCar.execute({
         user_id,
-        lastPulledVersion: Number(lastPulledVersion),
+        rentals:
+          p.length < 3
+            ? []
+            : p
+                .replace('[', '')
+                .replace(']', '')
+                .replace(/},{/g, '}},{{')
+                .split('},{')
+                .map(item => JSON.parse(item)),
       });
 
       return res.json({

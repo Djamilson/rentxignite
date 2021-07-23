@@ -61,6 +61,10 @@ const carSchema = tableSchema({
       name: 'photo_url',
       type: 'string',
     },
+    {
+      name: 'updated_at_',
+      type: 'string',
+    },
   ],
 });
 

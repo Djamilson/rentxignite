@@ -93,8 +93,6 @@ export function SchedulingDetails() {
         message: `Agora você só precisa ir\naté a concessionária da RENTX\npegar o seu automóvel.`,
       });
     } catch (error) {
-      console.log('Erro ao tenta fazer a reserva::', error.response.data);
-      console.log('Erro ao tenta fazer a reserva::', error.message);
       let message = 'Ocorreu uma falha ao far a reserva, tente novamente!';
 
       const { statusCode } = error?.response.data;
@@ -134,13 +132,10 @@ export function SchedulingDetails() {
   useEffect(() => {
     async function fetchCarUpdated() {
       try {
-        console.log('=mys id::', car.id);
         const { data } = await api.get(`/cars/${car.id}`);
 
         setCarUpdated(data);
-      } catch (erro) {
-        console.log('Sei onde voce está!!!', erro);
-      }
+      } catch {}
     }
     if (netInfo.isConnected === true) {
       fetchCarUpdated();

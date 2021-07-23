@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+
+import { StyleSheet, StatusBar } from 'react-native';
 import { useTheme } from 'styled-components';
-import { StyleSheet } from 'react-native';
+
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -9,23 +11,22 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from 'react-native-reanimated';
-import { AntDesign } from '@expo/vector-icons';
 import { format } from 'date-fns';
+
+import { AntDesign } from '@expo/vector-icons';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 import { BackButton } from '../../components/BackButton';
 
 import { api } from '../../_services/apiClient';
+import { synchronize } from '@nozbe/watermelondb/sync';
 
 import { Rental } from '../../components/Rental';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { LoadAnimation } from '../../components/LoadAnimation';
+
 import { IRentalDTO } from '../../dtos/RentalDTO';
 import { formatDate } from '../../utils/formatDate';
-import {
-  getStatusBarHeight,
-  getBottomSpace,
-} from 'react-native-iphone-x-helper';
-import { synchronize } from '@nozbe/watermelondb/sync';
 
 import { database } from '../../database';
 import { Rental as ModelRental } from '../../database/model/Rental';
@@ -33,31 +34,34 @@ import { Rental as ModelRental } from '../../database/model/Rental';
 import {
   Container,
   Header,
+  HeaderSub,
+  Details,
+  Description,
+  Brand,
+  RentalView,
+  Period,
+  Price,
   Title,
+  RentalList,
   SubTitle,
-  Content,
-  Appointments,
-  AppointmentsTitle,
-  AppointmentsQuantity,
-  CarList,
-  CarWrapper,
-  CarFooter,
-  CarFooterTitle,
-  CarFooterPeriod,
-  CarFooterDate,
+  RentalWrapper,
+  RentalFooter,
+  RentalFooterTitle,
+  RentalFooterPeriod,
+  RentalFooterDate,
 } from './styles';
-import { useNetInfo } from '@react-native-community/netinfo';
 
 export function MyRentals() {
-  const theme = useTheme();
-  const netInfo = useNetInfo();
-  const screenIsFocused = useIsFocused();
-
+  const [rentals, setRentals] = useState<IRentalDTO[]>([] as IRentalDTO[]);
   const [flagUpdateRentals, setFlagUpdateRentals] = useState(0);
 
   const [loading, setLoading] = useState(true);
-  const [rentals, setRentals] = useState<IRentalDTO[]>([] as IRentalDTO[]);
+
+  const netInfo = useNetInfo();
   const navigation = useNavigation();
+
+  const theme = useTheme();
+  const screenIsFocused = useIsFocused();
 
   const scrollY = useSharedValue(0);
   const scrolHandler = useAnimatedScrollHandler((event) => {
@@ -66,12 +70,23 @@ export function MyRentals() {
 
   const headerStyleAnimation = useAnimatedStyle(() => {
     return {
+      //aqui muda a distâcia entre o header e o ScrollView
+      //260 distância do top até inicio do scrollView
+
+      //100 largura do meu header final
+
       height: interpolate(
         scrollY.value,
-        [0, 230],
-        [230, 90],
+        [0, 260],
+        [260, 112],
         Extrapolate.CLAMP,
       ),
+    };
+  });
+
+  const sliderCarsStyleAnimation = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolate.CLAMP),
     };
   });
 
@@ -80,26 +95,39 @@ export function MyRentals() {
   }
 
   async function offLineSynchronize() {
-    await synchronize({
-      database,
-      pullChanges: async ({ lastPulledAt }) => {
-        try {
-          const { data } = await api.get(
-            `rentals/sync/pull?lastPulledVersion=${lastPulledAt || 0}`,
-          );
+    const rentalCollection = database.get<ModelRental>('rentals');
+    await rentalCollection
+      .query()
+      .fetch()
+      .then((item) => {
+        return item?.map((item: any) => {
+          return {
+            id: item.id,
+            updated_at_: item._raw.updated_at_,
+          };
+        });
+      })
+      .then(async (res) => {
+        await synchronize({
+          database,
+          pullChanges: async () => {
+            try {
+              const { data } = await api.get(`rentals/sync/pull`, {
+                params: { rentals: JSON.stringify(res) },
+              });
 
-          const { changes, latestVersion } = data;
-          console.log('Quer ### Vindo do Banco rental', data);
+              const { changes, latestVersion } = data;
 
-          return { changes, timestamp: latestVersion };
-        } catch (error) {
-          throw new Error(error);
-        }
-      },
-      pushChanges: async ({}) => {
-        //envia para a api
-      },
-    });
+              return { changes, timestamp: latestVersion };
+            } catch (error) {
+              throw new Error(error);
+            }
+          },
+          pushChanges: async ({}) => {
+            //envia para a api
+          },
+        });
+      });
 
     setFlagUpdateRentals(flagUpdateRentals + 1);
   }
@@ -120,10 +148,12 @@ export function MyRentals() {
                   id: item.id,
                   car_id: item.car_id,
                   start_date: item.start_date,
+                  end_date: String(item.end_date),
                   expected_return_date: item.expected_return_date,
                   status: item.status,
                   total: item.total,
 
+                  updated_at_: item.updated_at_,
                   car_name: item.car_name,
                   car_brand: item.car_brand,
 
@@ -168,91 +198,102 @@ export function MyRentals() {
 
   return (
     <Container>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
+
       <Animated.View
         style={[
           headerStyleAnimation,
           styles.header,
           {
-            width: '100%',
+            backgroundColor: theme.colors.header,
           },
         ]}
       >
         <Header>
           <BackButton onPress={handleBack} color={theme.colors.shape} />
-          <Title>
-            Meus{'\n'}
-            agendamentos
-          </Title>
 
-          <SubTitle>Conforto, segurança e praticidade.</SubTitle>
+          <Animated.View style={sliderCarsStyleAnimation}>
+            <HeaderSub>
+              <Title>
+                Meus{'\n'}
+                agendamentos
+              </Title>
+
+              <SubTitle>Conforto, segurança e praticidade.</SubTitle>
+            </HeaderSub>
+          </Animated.View>
         </Header>
       </Animated.View>
+
       <Animated.ScrollView
         contentContainerStyle={{
-          paddingTop: getStatusBarHeight() + RFValue(250),
-          flex: 1,
-          marginLeft: 10,
-          marginRight: 40,
-
-          paddingBottom: getBottomSpace() + RFValue(70),
+          paddingHorizontal: 24,
         }}
         showsVerticalScrollIndicator={false}
         onScroll={scrolHandler}
         scrollEventThrottle={16}
       >
-        <Content>
-          <Appointments>
-            <AppointmentsTitle>Agendamentos feitos</AppointmentsTitle>
-            <AppointmentsQuantity>{rentals.length}</AppointmentsQuantity>
-          </Appointments>
+        <Details>
+          <Description>
+            <Brand>Agendamentos feitos</Brand>
+          </Description>
 
-          {loading ? (
-            <LoadAnimation />
-          ) : (
-            <CarList
-              data={rentals}
-              keyExtractor={(item) => String(item.id)}
-              renderItem={({ item, index }) => {
-                return (
-                  <Animated.View
-                    style={{
-                      shadowColor: '#000',
-                      shadowOffset: {
-                        width: 0,
-                        height: 5,
-                      },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 10,
-                    }}
-                  >
-                    <CarWrapper key={item.id}>
-                      <Rental data={item} />
-                      <CarFooter>
-                        <CarFooterTitle>Período</CarFooterTitle>
-                        <CarFooterPeriod>
-                          <CarFooterDate>
-                            {item.start_date_formated}
-                          </CarFooterDate>
+          <RentalView>
+            <Period>Qauntidade</Period>
+            <Price>{rentals.length}</Price>
+          </RentalView>
+        </Details>
 
-                          <AntDesign
-                            name="arrowright"
-                            size={RFValue(20)}
-                            color={theme.colors.title}
-                            style={{ marginHorizontal: RFValue(10) }}
-                          />
+        {loading ? (
+          <LoadAnimation />
+        ) : (
+          <RentalList
+            data={rentals}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => {
+              return (
+                <Animated.View
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 5,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 10,
+                  }}
+                >
+                  <RentalWrapper key={item.id}>
+                    <Rental data={item} />
+                    <RentalFooter>
+                      <RentalFooterTitle>Período</RentalFooterTitle>
+                      <RentalFooterPeriod>
+                        <RentalFooterDate>
+                          {item.start_date_formated}
+                        </RentalFooterDate>
 
-                          <CarFooterDate>
-                            {item.expected_return_date_formated}
-                          </CarFooterDate>
-                        </CarFooterPeriod>
-                      </CarFooter>
-                    </CarWrapper>
-                  </Animated.View>
-                );
-              }}
-            />
-          )}
-        </Content>
+                        <AntDesign
+                          name="arrowright"
+                          size={RFValue(20)}
+                          color={theme.colors.title}
+                          style={{ marginHorizontal: RFValue(10) }}
+                        />
+
+                        <RentalFooterDate>
+                          {item.expected_return_date_formated}
+                        </RentalFooterDate>
+                      </RentalFooterPeriod>
+                    </RentalFooter>
+                  </RentalWrapper>
+                </Animated.View>
+              );
+            }}
+          />
+        )}
       </Animated.ScrollView>
     </Container>
   );
@@ -260,11 +301,10 @@ export function MyRentals() {
 
 const styles = StyleSheet.create({
   header: {
-    position: 'absolute',
     overflow: 'hidden',
     zIndex: 1,
   },
   back: {
-    marginTop: 24,
+    marginTop: 0,
   },
 });

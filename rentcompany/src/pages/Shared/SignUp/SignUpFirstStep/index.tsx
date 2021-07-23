@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Alert, TextInput, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import * as Yup from 'yup';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Input } from '../../../components/Input';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Input } from '../../../../components/Input';
+
+import { Button } from '../../../../components/Button';
 
 import {
   KeyboardAvoidingView,
@@ -22,15 +24,12 @@ import {
   FormTitle,
   Steps,
 } from './styles';
-import { Button } from '../../../components/Button';
 
 export function SignUpFirstStep() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [driverLicense, setDriverLicense] = useState('');
   const nameGroup = 'role-client';
-
-  const emailInputRef = useRef<TextInput>(null);
 
   const navigation = useNavigation();
 
@@ -55,7 +54,7 @@ export function SignUpFirstStep() {
       navigation.navigate('SignUpSecondStep', { user: { ...data, nameGroup } });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
-        Alert.alert('Opa', error.message);
+        Alert.alert('Ooops!', error.message);
       } else {
         Alert.alert(
           'Error na autenticação!',

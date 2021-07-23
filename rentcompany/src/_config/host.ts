@@ -1,3 +1,5 @@
+import * as Network from 'expo-network';
+
 // import { Platform } from 'react-native';
 // import { NetworkInfo } from 'react-native-network-info';
 
@@ -12,8 +14,12 @@ const url = 'www.ofertadodia.palmas.br/gostack';
 //10.0.0.90
 //192.168.1.107
 
+//const LOCALHOST = async () => await Network.getIpAddressAsync();
+//LOCALHOST: '10.0.0.90',
+
+
 export default {
-  LOCALHOST: '192.168.1.107',
+  LOCALHOST:'10.0.0.90',
   PORT: 3335,
   WEBHOST: url,
 };

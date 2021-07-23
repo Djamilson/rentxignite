@@ -1,40 +1,22 @@
-import { eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
+import { eachDayOfInterval, format } from 'date-fns';
 
 import { MarkedDateProps, DayProps } from '.';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import theme from '../../global/theme';
 
-function meDateStart(startDate: DayProps): Date {
+function meDate(startDate: DayProps): Date {
   const now = new Date(startDate.dateString);
-  const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-
-  console.log('akii: ', utc);
-
-  return utc;
-}
-
-function meDateEnd(end_date: DayProps): Date {
-  const now = new Date(end_date.dateString);
-  const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-  
-  return utc;
+  return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
 }
 
 export function generateInterval(start: DayProps, end: DayProps) {
   let interval: MarkedDateProps = {};
 
   eachDayOfInterval({
-    start: meDateStart(start),
-    end: meDateEnd(end),
+    start: meDate(start),
+    end: meDate(end),
   }).forEach((item) => {
-    console.log('=>> dentro: function Item', item);
-
     const date = format(getPlatformDate(item), 'yyyy-MM-dd');
-
-    console.log('=>> getPlatformDate(item)', getPlatformDate(item));
-
-    console.log('=>> como fica dentro: function', date);
 
     interval = {
       ...interval,

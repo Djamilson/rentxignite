@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components/native';
 import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 interface IOptionsProps {
@@ -13,13 +16,11 @@ export const Container = styled.View`
 
 export const Header = styled.View`
   width: 100%;
-  height: ${RFValue(227)}px;
+  height: ${RFValue(150)}px;
 
   background-color: ${({ theme }) => theme.colors.header};
   padding: 0 24px;
-
   align-items: center;
-  margin-bottom: ${RFValue(50)}px;
 `;
 
 export const HeaderTop = styled.View`
@@ -39,13 +40,24 @@ export const HeaderTitle = styled.Text`
 
 export const LogoutButton = styled(BorderlessButton)``;
 
+export const PhotoContainerView = styled.View`
+  margin-top: 0;
+  width: 100%;
+  height: ${RFValue(90)}px;
+
+  background-color: ${({ theme }) => theme.colors.header};
+  padding: 0 24px;
+
+  align-items: center;
+  z-index: 1;
+`;
+
 export const PhotoContainer = styled.View`
   width: 180px;
   height: 180px;
   border-radius: 90px;
 
   background-color: ${({ theme }) => theme.colors.shape};
-  margin-top: 48px;
 `;
 
 export const Photo = styled.Image`
@@ -71,7 +83,7 @@ export const PhotoButton = styled(RectButton)`
 
 export const Content = styled.View`
   padding: 0 24px;
-  margin-top: ${RFValue(122)}px;  
+  margin-top: ${RFValue(122)}px;
 `;
 
 export const Options = styled.View`
@@ -103,3 +115,16 @@ export const OptionTitle = styled.Text<IOptionsProps>`
 `;
 
 export const Section = styled.View``;
+
+export const Footer = styled.View`
+  width: 100%;
+  padding: 24px 0px;
+  padding-bottom: ${getBottomSpace() + 24}px;
+`;
+
+export const OffLineInfo = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.primary_400};
+  color: ${({ theme }) => theme.colors.main};
+  font-size: ${RFValue(10)}px;
+  text-align: center;
+`;

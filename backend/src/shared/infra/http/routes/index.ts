@@ -35,7 +35,7 @@ routes.use('/phones', phonesRouter);
 routes.use('/persons', personsRouter);
 
 routes.use('/password', passwordRouter);
-routes.use('/profile', profileRouter);
+routes.use('/profiles', profileRouter);
 
 routes.use('/cities', citiesRouter);
 routes.use('/states', statesRouter);

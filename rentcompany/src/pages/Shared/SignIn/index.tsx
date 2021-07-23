@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-
-import { useAuth } from '../../hooks/auth';
 import * as Yup from 'yup';
 
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import { PasswordInput } from '../../components/PasswordInput';
+import { useAuth } from '../../../hooks/auth';
+
+import { Button } from '../../../components/Button';
+import { Input } from '../../../components/Input';
+import { PasswordInput } from '../../../components/PasswordInput';
 
 import {
   Container,
@@ -66,6 +66,10 @@ export function SignIn() {
 
   function handleNewAccount() {
     navigation.navigate('SignUpFirstStep');
+  }
+
+  function handleForgotPassword() {
+    navigation.navigate('ForgotPassword');
   }
 
   return (
@@ -120,7 +124,7 @@ export function SignIn() {
               <ForgotPassword
                 color={theme.colors.background_primary}
                 title="Esqueci minha senha"
-                onPress={handleNewAccount}
+                onPress={handleForgotPassword}
                 enabled={true}
                 loading={false}
               />

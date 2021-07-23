@@ -108,9 +108,9 @@ class RentalsRepository implements IRentalsRepository {
 
   async listByUpdated({
     user_id,
-    lastPulledVersion: c,
+    lastPulledVersion: meDate,
   }: IReqDate): Promise<Rental[] | undefined> {
-    const lastPulledVersion = c.toISOString().replace('T', ' ');
+    const lastPulledVersion = meDate.toISOString().replace('T', ' ');
 
     const cars = await this.repository
       .createQueryBuilder()

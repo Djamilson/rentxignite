@@ -3,8 +3,12 @@ import { inject, injectable } from 'tsyringe';
 import { Car } from '../infra/typeorm/entities/Car';
 import { ICarsRepository } from '../repositories/ICarsRepository';
 
+interface IRes {
+  id: string;
+  updated_at_: string;
+}
 interface IRequest {
-  lastPulledVersion: number;
+  cars: IRes[];
 }
 
 interface IResCar {
@@ -32,6 +36,27 @@ interface IResponseData {
   deleted: [];
 }
 
+function carX(car: Car): IResCar {
+  return {
+    id: car.id,
+    name: car.name,
+    brand: car.brand,
+    about: car.about,
+    license_plate: car.license_plate,
+    available: car.available,
+    daily_rate: Number(car.daily_rate),
+    fine_amount: Number(car.fine_amount),
+    period: car.period,
+    price: Number(car.price),
+    fuel_type: car.fuel_type,
+    category_id: car.category.id,
+    category_name: car.category.name,
+    category_description: car.category.description,
+    thumbnail: car?.photo?.photo,
+    photo_url: car?.photo?.getAvatarUrl(),
+  };
+}
+
 @injectable()
 class SyncPullCarsService {
   constructor(
@@ -39,69 +64,42 @@ class SyncPullCarsService {
     private carsRepository: ICarsRepository,
   ) {}
 
-  public async execute({
-    lastPulledVersion,
-  }: IRequest): Promise<IResponseData> {
+  public async execute({ cars }: IRequest): Promise<IResponseData> {
     let onlyNews = [] as IResCar[];
     let onlyUpdated = [] as IResCar[];
 
     let flagOnlyNews = [] as Car[];
     let flagOnlyUpdated = [] as Car[];
 
-    if (lastPulledVersion === 0) {
-      flagOnlyNews = await this.carsRepository.listAll();
+    const carsBD = await this.carsRepository.listAll();
+
+    if (cars.length < 1) {
+      flagOnlyNews = carsBD;
     } else {
-      flagOnlyNews = await this.carsRepository.listByCreated(
-        new Date(lastPulledVersion),
-      );
-      flagOnlyUpdated = await this.carsRepository.listByUpdated(
-        new Date(lastPulledVersion),
-      );
+      // eslint-disable-next-line consistent-return
+      flagOnlyUpdated = carsBD?.filter(item => {
+        const update = cars?.find(
+          (carUse: IRes) =>
+            item.id === carUse.id &&
+            // eslint-disable-next-line no-underscore-dangle
+            String(item.updated_at) !== carUse.updated_at_,
+        );
+
+        if (update) return item;
+      });
+
+      // eslint-disable-next-line consistent-return
+      flagOnlyNews = carsBD?.filter(item => {
+        const existRental = cars?.find(carUse => item.id === carUse.id);
+
+        if (!existRental) return item;
+      });
     }
 
-    onlyNews = flagOnlyNews?.map(car => {
-      return {
-        id: car.id,
-        name: car.name,
-        brand: car.brand,
-        about: car.about,
-        license_plate: car.license_plate,
-        available: car.available,
-        daily_rate: Number(car.daily_rate),
-        fine_amount: Number(car.fine_amount),
-        period: car.period,
-        price: Number(car.price),
-        fuel_type: car.fuel_type,
-        category_id: car.category.id,
-        category_name: car.category.name,
-        category_description: car.category.description,
-        thumbnail: car?.photo?.photo,
-        photo_url: car?.photo?.getAvatarUrl(),
-      };
-    });
+    onlyNews = flagOnlyNews?.map(car => carX(car));
 
-    onlyUpdated = flagOnlyUpdated
-      ?.filter(car => car.created_at !== car.updated_at)
-      ?.map(car => {
-        return {
-          id: car.id,
-          name: car.name,
-          brand: car.brand,
-          about: car.about,
-          license_plate: car.license_plate,
-          available: car.available,
-          daily_rate: Number(car.daily_rate),
-          fine_amount: Number(car.fine_amount),
-          period: car.period,
-          price: Number(car.price),
-          fuel_type: car.fuel_type,
-          category_id: car.category.id,
-          category_name: car.category.name,
-          category_description: car.category.description,
-          thumbnail: car?.photo?.photo,
-          photo_url: car?.photo?.getAvatarUrl(),
-        };
-      });
+    onlyUpdated = flagOnlyUpdated?.map(car => carX(car));
+
     return {
       created: onlyNews,
       updated: onlyUpdated,

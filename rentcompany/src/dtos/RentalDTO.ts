@@ -2,7 +2,10 @@ export interface IRentalDTO {
   id: string;
   car_id: string;
   start_date: string;
+  end_date: string;
   expected_return_date: string;
+
+  updated_at_: string;
   status: string;
   total: number;
 

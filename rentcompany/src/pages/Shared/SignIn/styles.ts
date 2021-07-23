@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { Button } from '../../components/Button';
+import { Button } from '../../../components/Button';
 
 export const Container = styled.ScrollView.attrs({
   contentContainerStyle: {

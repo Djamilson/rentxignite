@@ -8,6 +8,7 @@ import {
   Details,
   Brand,
   Name,
+  Status,
   About,
   Rent,
   Period,
@@ -29,6 +30,7 @@ export function Rental({ data, ...rest }: IProps) {
       <Details>
         <Brand>{data.car_brand}</Brand>
         <Name>{data.car_name}</Name>
+        <Status>{data.status}</Status>
 
         <About>
           <Rent>
