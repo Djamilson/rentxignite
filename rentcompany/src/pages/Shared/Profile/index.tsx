@@ -17,11 +17,12 @@ import * as Yup from 'yup';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNetInfo } from '@react-native-community/netinfo';
 
-import { BackButton } from '../../components/BackButton';
-import { Input } from '../../components/Input';
-import { PasswordInput } from '../../components/PasswordInput';
-import { Button } from '../../components/Button';
-import { useAuth } from '../../hooks/auth';
+import { BackButton } from '../../../components/BackButton';
+import { Input } from '../../../components/Input';
+import { PasswordInput } from '../../../components/PasswordInput';
+import { Button } from '../../../components/Button';
+import { useAuth } from '../../../hooks/auth';
+import { api } from '../../../_services/apiClient';
 
 import {
   Container,
@@ -41,7 +42,6 @@ import {
   Footer,
   OffLineInfo,
 } from './styles';
-import { api } from '../../_services/apiClient';
 
 function Profile() {
   const { user, signOut, updateUser } = useAuth();
@@ -88,7 +88,7 @@ function Profile() {
   function handleOptionChange(optionSelected: 'dataEdit' | 'passwordEdit') {
     if (netInfo.isConnected === false && optionSelected === 'passwordEdit') {
       Alert.alert(
-        'Você esá offlene!',
+        'Você esá offline!',
         'Para mudar a senha, conecte-se a Internet.',
       );
     } else {
@@ -154,16 +154,23 @@ function Profile() {
         old_password: Yup.string(),
         password: Yup.string().when('old_password', {
           is: (val: any) => !!val.length,
-          then: Yup.string().required('Campo obrigatório'),
+          then: Yup.string().required(
+            'Senha atual é obrigatorio, tente novamente.',
+          ),
           otherwise: Yup.string(),
         }),
         password_confirmation: Yup.string()
           .when('old_password', {
             is: (val: any) => !!val.length,
-            then: Yup.string().required('Campo obrigatório'),
+            then: Yup.string().required(
+              'Confirmação de senha é obrigatorio, tente novamente.',
+            ),
             otherwise: Yup.string(),
           })
-          .oneOf([Yup.ref('password'), 'null'], 'Confirmação incorreta'),
+          .oneOf(
+            [Yup.ref('password'), 'null'],
+            'Confirmação de senha incorreta, tente novamente.',
+          ),
       });
       const data = {
         old_password: oldPassword,
@@ -171,15 +178,15 @@ function Profile() {
         password_confirmation: confirmPassword,
       };
 
-      await schema.validate(data);
+      await schema.validate(data).then(async () => {
+        await api.put('/profiles/passwords', data);
 
-      await api.put('/profiles/passwords', data);
+        Alert.alert('Sucesso!', 'Senha atualizada com sucesso.');
 
-      Alert.alert('Sucesso!', 'Perfil atualizado.');
-
-      setOldPassword('');
-      setPassword('');
-      setConfirmPassword('');
+        setOldPassword('');
+        setPassword('');
+        setConfirmPassword('');
+      });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         Alert.alert('Ooops!', error.message);
@@ -293,16 +300,19 @@ function Profile() {
                       iconName="lock"
                       placeholder="Senha atual"
                       onChangeText={(e: any) => setOldPassword(e)}
+                      defaultValue={oldPassword}
                     />
                     <PasswordInput
                       iconName="lock"
                       placeholder="Nova senha"
                       onChangeText={(e: any) => setPassword(e)}
+                      defaultValue={password}
                     />
                     <PasswordInput
                       iconName="lock"
                       placeholder="Confirma senha"
                       onChangeText={(e: any) => setConfirmPassword(e)}
+                      defaultValue={confirmPassword}
                     />
                   </Section>
 

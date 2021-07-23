@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import * as Device from 'expo-device';
 
@@ -21,6 +21,9 @@ if (__DEV__) {
 //baseURL = `https://www.ofertadodia.palmas.br/gostack`;
 baseURL = `http://${LOCALHOST}:${PORT}`;
 
+let isRefreshing = false;
+let failedRequestsQueue = [];
+
 export function setupAPIClient() {
   const api = axios.create({
     baseURL,
@@ -30,11 +33,15 @@ export function setupAPIClient() {
     (response) => {
       return response;
     },
-    (err) => {
+    (err: AxiosError) => {
       return new Promise(async (resolve, reject) => {
         const originalReq = err.config;
-        if (err.response.status === 401 && err.config && !err.config._retry) {
-          originalReq._retry = true;
+        if (
+          err.response?.data.status === 401 &&
+          err.config &&
+          !err.config.data._retry
+        ) {
+          originalReq.data._retry = true;
 
           try {
             const userCollection = database.get<ModelUser>('users');
@@ -61,11 +68,27 @@ export function setupAPIClient() {
                   } catch (err) {
                     throw new Error(err);
                   }
+                })
+                .catch(function (error) {
+                  throw new Error(error);
                 });
             });
           } catch (err) {
             throw new Error(err);
           }
+          /*
+          return new Promise((resolve, reject) => {
+            failedRequestsQueue.push({
+              onSuccess: (token: string) => {
+                originalReq.headers['Authorization'] = `Bearer ${token}`;
+
+                resolve(api(originalReq));
+              },
+              onFailure: (err: AxiosError) => {
+                reject(err);
+              },
+            });
+          });*/
         } else {
           reject(err);
         }

@@ -54,7 +54,7 @@ export function SignUpFirstStep() {
       navigation.navigate('SignUpSecondStep', { user: { ...data, nameGroup } });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
-        Alert.alert('Opa', error.message);
+        Alert.alert('Ooops!', error.message);
       } else {
         Alert.alert(
           'Error na autenticação!',

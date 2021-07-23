@@ -8,7 +8,7 @@ import HomeSvg from '../assets/home.svg';
 import CarSvg from '../assets/car.svg';
 import PeopleSvg from '../assets/people.svg';
 
-import { Profile } from '../pages/Profile';
+import { Profile } from '../pages/Shared/Profile';
 import { MyRentals } from '../pages/MyRentals';
 
 const { Navigator, Screen } = createBottomTabNavigator();

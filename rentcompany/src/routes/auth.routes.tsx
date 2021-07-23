@@ -4,12 +4,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Confirmation } from '../pages/Confirmation';
 import { Splash } from '../pages/Splash';
-import { SignIn } from '../pages/Login/SignIn';
+import { SignIn } from '../pages/Shared/SignIn';
 
-import { ForgotPassword } from '../pages/Login/ForgotPassword';
+import { ForgotPassword } from '../pages/Shared/ForgotPassword';
 
-import { SignUpFirstStep } from '../pages/Login/SignUp/SignUpFirstStep';
-import { SignUpSecondStep } from '../pages/Login/SignUp/SignUpSecondStep';
+import { SignUpFirstStep } from '../pages/Shared/SignUp/SignUpFirstStep';
+import { SignUpSecondStep } from '../pages/Shared/SignUp/SignUpSecondStep';
 
 const { Navigator, Screen } = createStackNavigator();
 

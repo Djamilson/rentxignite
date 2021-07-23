@@ -48,7 +48,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     try {
       const device = Device.modelName;
 
-      api
+      await api
         .post('sessions', {
           email,
           password,
@@ -83,8 +83,14 @@ function AuthProvider({ children }: AuthProviderProps) {
                 if (res) {
                   setData(res as unknown as User);
                 }
+              })
+              .catch(function (error) {
+                throw new Error(error);
               });
           });
+        })
+        .catch(function (error) {
+          throw new Error(error);
         });
     } catch (error) {
       throw new Error(error);

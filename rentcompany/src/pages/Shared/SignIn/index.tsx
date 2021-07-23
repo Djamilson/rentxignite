@@ -68,6 +68,10 @@ export function SignIn() {
     navigation.navigate('SignUpFirstStep');
   }
 
+  function handleForgotPassword() {
+    navigation.navigate('ForgotPassword');
+  }
+
   return (
     <KeyboardAvoidingView
       enabled
@@ -120,7 +124,7 @@ export function SignIn() {
               <ForgotPassword
                 color={theme.colors.background_primary}
                 title="Esqueci minha senha"
-                onPress={handleNewAccount}
+                onPress={handleForgotPassword}
                 enabled={true}
                 loading={false}
               />
