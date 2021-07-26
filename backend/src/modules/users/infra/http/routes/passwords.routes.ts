@@ -3,13 +3,15 @@ import { Router } from 'express';
 
 import ForgotPasswordController from '../controllers/ForgotPasswordController';
 import ResetPasswordController from '../controllers/ResetPasswordController';
+import { ValidationCodeController } from '../controllers/ValidationCodeController';
 
-const passwordRouter = Router();
+const passwordsRouter = Router();
 
 const forgotPasswordController = new ForgotPasswordController();
 const resetPasswordController = new ResetPasswordController();
+const validationCodeController = new ValidationCodeController();
 
-passwordRouter.post(
+passwordsRouter.post(
   '/forgot',
   celebrate({
     [Segments.BODY]: {
@@ -18,7 +20,8 @@ passwordRouter.post(
   }),
   forgotPasswordController.create,
 );
-passwordRouter.post(
+
+passwordsRouter.post(
   '/reset',
   celebrate({
     [Segments.BODY]: {
@@ -30,4 +33,14 @@ passwordRouter.post(
   resetPasswordController.create,
 );
 
-export default passwordRouter;
+passwordsRouter.post(
+  '/validationCode',
+  celebrate({
+    [Segments.BODY]: {
+      code: Joi.string().required(),
+    },
+  }),
+  validationCodeController.index,
+);
+
+export default passwordsRouter;

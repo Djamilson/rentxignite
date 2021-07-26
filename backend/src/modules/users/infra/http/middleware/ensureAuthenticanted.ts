@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
 import authConfig from '@config/auth';
@@ -12,11 +12,8 @@ interface ITokenPayload {
   sub: string;
 }
 
-export function ensureAuthenticated(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function ensureAuthenticated(request: Request, next: NextFunction) {
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {

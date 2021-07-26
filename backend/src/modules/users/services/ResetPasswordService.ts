@@ -5,8 +5,8 @@ import AppError from '@shared/errors/AppError';
 
 // import User from '../infra/typeorm/entities/User';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
+import IForgotTokensRepository from '../repositories/IForgotTokensRepository';
 import IUsersRepository from '../repositories/IUsersRepository';
-import IUserTokensRepository from '../repositories/IUserTokensRepository';
 
 interface IRequest {
   token: string;
@@ -19,15 +19,15 @@ class ResetPasswordService {
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
 
-    @inject('UserTokensRepository')
-    private userTokensRepository: IUserTokensRepository,
+    @inject('ForgotTokensRepository')
+    private forgotTokensRepository: IForgotTokensRepository,
 
     @inject('HashProvider')
     private hashProvider: IHashProvider,
   ) {}
 
   public async execute({ token, password }: IRequest): Promise<void> {
-    const userToken = await this.userTokensRepository.findByToken(token);
+    const userToken = await this.forgotTokensRepository.findByToken(token);
 
     if (!userToken) {
       throw new AppError('User token does not exists');
