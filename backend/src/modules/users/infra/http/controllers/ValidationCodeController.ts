@@ -9,9 +9,9 @@ class ValidationCodeController {
       const { code } = req.body;
       const validationCode = container.resolve(ValidationCodeService);
 
-      const user_id = await validationCode.execute({ code });
+      const token = await validationCode.execute({ code });
 
-      return res.status(201).json(user_id);
+      return res.status(201).json(token);
     } catch (error) {
       return res
         .status(400)

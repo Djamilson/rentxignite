@@ -13,7 +13,7 @@ interface IRequest {
 }
 
 interface IObject {
-  user_id: string;
+  token: string;
 }
 
 interface ITokenPayload {
@@ -37,10 +37,9 @@ class ValidationCodeService {
         throw new AppError('User token does not exists', 401);
       }
 
-      const decoded = verify(userToken.token, authConfig.jwt.secretForgotToken);
-      const { sub: user_id } = decoded as ITokenPayload;
+      verify(userToken.token, authConfig.jwt.secretForgotToken);
 
-      return { user_id };
+      return { token: userToken.token };
     } catch (err) {
       if (err) {
         if (err.name === 'TokenExpiredError') {

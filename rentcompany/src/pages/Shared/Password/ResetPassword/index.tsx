@@ -9,12 +9,12 @@ import {
   Alert,
 } from 'react-native';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Button } from '../../../components/Button';
-import { PasswordInput } from '../../../components/PasswordInput';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Button } from '../../../../components/Button';
+import { PasswordInput } from '../../../../components/PasswordInput';
 
-import { api } from '../../../_services/apiClient';
+import { api } from '../../../../_services/apiClient';
 
 import {
   Container,
@@ -27,13 +27,9 @@ import {
 } from './styles';
 
 interface Params {
-  user: {
-    name: string;
-    email: string;
-    driverLicense: string;
-    nameGroup: string;
-  };
+  token: string;
 }
+
 export function ResetPassword() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -42,7 +38,7 @@ export function ResetPassword() {
   const theme = useTheme();
 
   const route = useRoute();
-  const { user } = route.params as Params;
+  const { token } = route.params as Params;
 
   function handleBack() {
     navigation.goBack();
@@ -58,23 +54,21 @@ export function ResetPassword() {
     }
 
     try {
-      await api.post('/users/mobiles', {
-        name: user.name,
-        email: user.email,
-        driver_license: user.driverLicense,
+      await api.post('/passwords/reset', {
+        token,
         password,
-        nameGroup: user.nameGroup,
+        password_confirmation: passwordConfirm,
       });
 
       navigation.navigate('Confirmation', {
         nextScreenRoute: 'SignIn',
-        title: 'Conta criada!',
+        title: 'Senha Redefinida com sucesso!',
         message: `Agora é só fazer login\ne aproveitar.`,
       });
     } catch (error) {
       Alert.alert(
-        'Falha no cadastro!',
-        'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente com alguns dados diferentes!',
+        'Falha no cadastro de nova senha!',
+        'Ocorreu uma falha ao tentar fazer a nova senha, tente novamente!',
       );
     }
   }
@@ -91,18 +85,18 @@ export function ResetPassword() {
             </Steps>
           </Header>
 
-          <Title>Crie sua{'\n'}conta</Title>
+          <Title>Rededina sua{'\n'}senha</Title>
 
           <SubTitle>
-            Faça seu cadastro de{'\n'}
+            Altere sua senha de{'\n'}
             forma rápida e fácil
           </SubTitle>
           <Form>
-            <FormTitle>2. Senha</FormTitle>
+            <FormTitle>2. Sua nova senha</FormTitle>
 
             <PasswordInput
               iconName="lock"
-              placeholder="Sua senha"
+              placeholder="Sua nova senha"
               onChangeText={(e: any) => setPassword(e)}
               value={password}
             />

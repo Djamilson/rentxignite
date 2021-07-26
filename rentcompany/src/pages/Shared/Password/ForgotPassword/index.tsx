@@ -3,12 +3,14 @@ import { useNavigation } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import * as Yup from 'yup';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Input } from '../../../components/Input';
-import { Button } from '../../../components/Button';
+import { useNetInfo } from '@react-native-community/netinfo';
 
-import { PasswordInput } from '../../../components/PasswordInput';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Input } from '../../../../components/Input';
+import { Button } from '../../../../components/Button';
+
+import { api } from '../../../../_services/apiClient';
 
 import {
   KeyboardAvoidingView,
@@ -36,9 +38,6 @@ import {
   Footer,
   OffLineInfo,
 } from './styles';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { api } from '../../../_services/apiClient';
-
 import { Animated, Image } from 'react-native';
 
 import {
@@ -144,8 +143,7 @@ export function ForgotPassword() {
         code: value,
       });
 
-      console.log('myUser: ', data)
-      navigation.navigate('ResetPassword', { user_id: data });
+      navigation.navigate('ResetPassword', data);
     } catch (error) {
       setValue('');
 

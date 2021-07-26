@@ -76,16 +76,14 @@ class SendForgotPasswordEmailService {
       );
     }
 
-    const code = uuid().substr(27, 4);
-    console.log('Code:===>> 1');
+    const code = uuid().substr(32, 4);
+
     await this.forgotTokensRepository.create({
       user_id: userExists.id,
       token: forgot_token,
       expires_date: forgot_token_expires_date,
       code,
     });
-
-    console.log('Code:===>> 2');
 
     const forgotPasswordTemplate = path.resolve(
       __dirname,
