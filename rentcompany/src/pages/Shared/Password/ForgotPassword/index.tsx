@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import * as Yup from 'yup';
-
 import { useNetInfo } from '@react-native-community/netinfo';
 
 import { BackButton } from '../../../../components/BackButton';
@@ -48,6 +47,7 @@ import {
   NOT_EMPTY_CELL_BG_COLOR,
   styles,
 } from './styles';
+import { useEffect } from 'react';
 
 const { Value, Text: AnimatedText } = Animated;
 
@@ -85,7 +85,7 @@ const animateCell = ({ hasValue, index, isFocused }: IRes) => {
 
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [userId, setUserId] = useState('');
+  const screenIsFocused = useIsFocused();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [option, setOption] = useState<'dataEmail' | 'inByCode'>('dataEmail');
@@ -153,7 +153,7 @@ export function ForgotPassword() {
         let messageDate = {
           title: 'Error na solicitação',
           message:
-            'Ocorreu um erro ao tentar validar o código, tente novamente ou faça uma nova solicitação.',
+            'Ocorreu um erro ao tentar validar o código, tente novamente ou solicite um novo código de validação.',
         };
         if (error.response?.data.status === 401) {
           messageDate = {
@@ -217,6 +217,10 @@ export function ForgotPassword() {
     );
   };
 
+  useEffect(() => {
+    setValue('');
+  }, [screenIsFocused]);
+
   return (
     <KeyboardAvoidingView behavior="position" enabled>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -244,7 +248,7 @@ export function ForgotPassword() {
                 active={option === 'inByCode'}
               >
                 <OptionTitle active={option === 'inByCode'}>
-                  Tenho código Redefinir
+                  Tenho código de recuperar
                 </OptionTitle>
               </Option>
             </Options>
@@ -297,7 +301,7 @@ export function ForgotPassword() {
 
                   {netInfo.isConnected === false && (
                     <OffLineInfo>
-                      Conecte-se a Internet para ver fazer a solicitação de
+                      Conecte-se a Internet para fazer a solicitação de
                       recuperação de senha!
                     </OffLineInfo>
                   )}

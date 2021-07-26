@@ -54,8 +54,12 @@ export function ResetPassword() {
     }
 
     try {
-      await api.post('/passwords/reset', {
-        token,
+      console.log('==>>', passwordConfirm);
+      console.log('==>>', password);
+      console.log('==>>', token);
+
+      await api.put(`/passwords/reset`, {
+        token: String(token),
         password,
         password_confirmation: passwordConfirm,
       });
@@ -66,6 +70,10 @@ export function ResetPassword() {
         message: `Agora é só fazer login\ne aproveitar.`,
       });
     } catch (error) {
+      console.log('my erro:', error);
+      console.log('my erro:', error.message);
+
+      console.log('my erro:', error.response.data);
       Alert.alert(
         'Falha no cadastro de nova senha!',
         'Ocorreu uma falha ao tentar fazer a nova senha, tente novamente!',
@@ -80,12 +88,12 @@ export function ResetPassword() {
           <Header>
             <BackButton onPress={handleBack} />
             <Steps>
-              <Bullet active />
               <Bullet />
+              <Bullet active />
             </Steps>
           </Header>
 
-          <Title>Rededina sua{'\n'}senha</Title>
+          <Title>Redefina sua{'\n'}senha</Title>
 
           <SubTitle>
             Altere sua senha de{'\n'}

@@ -55,6 +55,10 @@ class ForgotTokensRepository implements IForgotTokensRepository {
   public async deleteListIds(ids: ForgotToken[]): Promise<void> {
     await this.ormRepository.remove(ids);
   }
+
+  public async delete(id: string): Promise<void> {
+    await this.ormRepository.delete(id);
+  }
 }
 
 export default ForgotTokensRepository;

@@ -7,6 +7,7 @@ export default interface IForgotTokensRepository {
 
   findByUserId(user_id: string): Promise<ForgotToken[] | undefined>;
   deleteListIds(ids: ForgotToken[]): Promise<void>;
+  delete(id: string): Promise<void>;
 
   create(forgotToken: ICreateForgotTokenDTO): Promise<ForgotToken>;
   save(forgotToken: ForgotToken): Promise<ForgotToken>;
