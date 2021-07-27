@@ -1,10 +1,13 @@
 import { isBefore, parseISO, format } from 'date-fns';
+import path from 'path';
 import { inject, injectable } from 'tsyringe';
 
 import { ICarsRepository } from '@modules/cars/repositories/ICarsRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 import { IDateProvider } from '@shared/container/providers/DateProvider/IDateProvider';
+import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import AppError from '@shared/errors/AppError';
 
 import { Rental } from '../infra/typeorm/entities/Rental';
@@ -31,6 +34,12 @@ class CreateRentalService {
 
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('NotificationsRepository')
+    private notificationsRepository: INotificationsRepository,
+
+    @inject('MailProvider')
+    private mailProvider: IMailProvider,
   ) {}
 
   async execute({
@@ -51,7 +60,6 @@ class CreateRentalService {
       throw new AppError('There not find any car with the givan id', 402);
     }
 
-    console.log('==>>> ppp', startDate, expected_return_date);
     const compareDateFormatStart = `${format(
       startDate,
       'yyyy-MM-dd',
@@ -110,7 +118,7 @@ class CreateRentalService {
     }
     //
 
-    return this.rentalsRepository.create({
+    const myRental = await this.rentalsRepository.create({
       user_id,
       car_id,
       start_date: new Date(compareDateFormatStart),
@@ -121,6 +129,46 @@ class CreateRentalService {
           carExists.price,
       ),
     });
+
+    const dateFormattedStart = format(
+      new Date(compareDateFormatStart),
+      'dd/MM/yyyy',
+    );
+
+    const dateFormattedExpected_return = format(
+      new Date(compareDateFormatexpectedReturn),
+      'dd/MM/yyyy',
+    );
+
+    await this.notificationsRepository.create({
+      recipient_id: myRental.id,
+      content: `Nova reserva para ${dateFormattedStart} a ${dateFormattedExpected_return} `,
+    });
+
+    const createRentalTemplate = path.resolve(
+      __dirname,
+      '..',
+      'views',
+      'create_rental.hbs',
+    );
+
+    await this.mailProvider.sendMail({
+      to: {
+        name: userExists.person.name,
+        email: userExists.person.email,
+      },
+      subject: '[RentalX] Reserva realizda com sucesso',
+      templateData: {
+        file: createRentalTemplate,
+        variables: {
+          name: userExists.person.name,
+          start_date: dateFormattedStart,
+          expected_return_date: dateFormattedExpected_return,
+        },
+      },
+    });
+
+    return myRental;
   }
 }
 

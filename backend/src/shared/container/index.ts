@@ -3,8 +3,6 @@ import { container } from 'tsyringe';
 import '@modules/users/providers';
 import './providers';
 
-// import { CarsRepository } from '@modules/cars/infra/typeorm/repositories/CarsRepository';
-// import { ICarsRepository } from '@modules/cars/repositories/ICarsRepository';
 import { CarsRepository } from '@modules/cars/infra/typeorm/repositories/CarsRepository';
 import { PhotosRepository } from '@modules/cars/infra/typeorm/repositories/PhotosRepository';
 import { ICarsRepository } from '@modules/cars/repositories/ICarsRepository';
@@ -15,6 +13,8 @@ import CitiesRepository from '@modules/locality/infra/typeorm/repositories/Citie
 import StatesRepository from '@modules/locality/infra/typeorm/repositories/StatesRepository';
 import ICitiesRepository from '@modules/locality/repositories/ICitiesRepository';
 import IStatesRepository from '@modules/locality/repositories/IStatesRepository';
+import NotificationsRepository from '@modules/notifications/infra/typeorm/repositories/NotificationsRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import RefreshesTokensRepository from '@modules/refreshesTokens/infra/typeorm/repositories/RefreshesTokensRepository';
 import IRefreshesTokensRepository from '@modules/refreshesTokens/repositories/IRefreshesTokensRepository';
 import { RentalsRepository } from '@modules/rentals/infra/typeorm/repositories/RentalsRepository';
@@ -118,4 +118,9 @@ container.registerSingleton<IPhotosRepository>(
 container.registerSingleton<IRentalsRepository>(
   'RentalsRepository',
   RentalsRepository,
+);
+
+container.registerSingleton<INotificationsRepository>(
+  'NotificationsRepository',
+  NotificationsRepository,
 );
