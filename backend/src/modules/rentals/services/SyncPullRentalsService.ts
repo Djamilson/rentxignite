@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+import { parseISO, differenceInMilliseconds } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
@@ -100,29 +102,36 @@ class SyncPullRentalsService {
     const myCacheRentals = await this.cacheProvider.recover<IResponseData>(
       cachekey,
     );
+    console.log('Passou:: 01', JSON.stringify(myCacheRentals, null, 2));
 
-    if (myCacheRentals) {
-      return myCacheRentals;
-    }
+    /* if (myCacheRentals === null) {
+      return {
+        created: onlyNews || [],
+        updated: onlyUpdated || [],
+        deleted: [],
+      };
+    } */
+
+    console.log('Passou:: 02', JSON.stringify(myCacheRentals, null, 2));
 
     const rentalsBD = await this.rentalsRepository.listRentalByUserId(user_id);
 
     if (rentals.length < 1) {
       flagOnlyNews = rentalsBD;
     } else {
-      // eslint-disable-next-line consistent-return
       flagOnlyUpdated = rentalsBD?.filter(item => {
         const update = rentals?.find(
           (rentalUse: IRes) =>
             item.id === rentalUse.id &&
-            // eslint-disable-next-line no-underscore-dangle
-            String(item.updated_at) !== rentalUse.updated_at_,
+            differenceInMilliseconds(
+              item.updated_at,
+              parseISO(rentalUse.updated_at_),
+            ) !== 0,
         );
 
         if (update) return item;
       });
 
-      // eslint-disable-next-line consistent-return
       flagOnlyNews = rentalsBD?.filter(item => {
         const existRental = rentals?.find(
           rentalUse => item.id === rentalUse.id,
@@ -135,11 +144,7 @@ class SyncPullRentalsService {
     onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
     onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
 
-    await this.cacheProvider.save(cachekey, {
-      created: onlyNews || [],
-      updated: onlyUpdated || [],
-      deleted: [],
-    });
+    await this.cacheProvider.invalidate(`rentals:${user_id}`);
 
     return { created: onlyNews || [], updated: onlyUpdated || [], deleted: [] };
   }

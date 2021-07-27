@@ -22,6 +22,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier', 'eslint-plugin-import-helpers'],
   rules: {
+    'consistent-return': 'off',
+    'no-underscore-dangle': 'off',
     'no-undef': 'off',
     'eslint-disable-next-line/no-undef': 'off',
     'no-empty-function': 'off',

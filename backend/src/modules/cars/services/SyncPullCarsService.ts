@@ -1,3 +1,4 @@
+import { differenceInMilliseconds, parseISO } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 import { Car } from '../infra/typeorm/entities/Car';
@@ -76,13 +77,14 @@ class SyncPullCarsService {
     if (cars.length < 1) {
       flagOnlyNews = carsBD;
     } else {
-      // eslint-disable-next-line consistent-return
       flagOnlyUpdated = carsBD?.filter(item => {
         const update = cars?.find(
           (carUse: IRes) =>
             item.id === carUse.id &&
-            // eslint-disable-next-line no-underscore-dangle
-            String(item.updated_at) !== carUse.updated_at_,
+            differenceInMilliseconds(
+              item.updated_at,
+              parseISO(carUse.updated_at_),
+            ) !== 0,
         );
 
         if (update) return item;

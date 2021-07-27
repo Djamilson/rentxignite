@@ -172,7 +172,13 @@ class CreateRentalService {
       },
     });
 
-    await this.cacheProvider.invalidate(`rentals:${userExists.id}`);
+    const cachekey = `rentals:${userExists.id}`;
+
+    await this.cacheProvider.save(cachekey, {
+      created: [myRental],
+      updated: [],
+      deleted: [],
+    });
 
     return myRental;
   }

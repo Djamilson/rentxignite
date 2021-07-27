@@ -116,10 +116,16 @@ export function MyRentals() {
                 params: { rentals: JSON.stringify(res) },
               });
 
+              console.log('data:::bd: ', JSON.stringify(data, null, 2));
               const { changes, latestVersion } = data;
 
               return { changes, timestamp: latestVersion };
             } catch (error) {
+              console.log(error.message);
+
+              console.log(error.response.data);
+
+              console.log('Pega fogo cabaré:::', error);
               throw new Error(error);
             }
           },

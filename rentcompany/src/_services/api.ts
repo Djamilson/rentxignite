@@ -33,15 +33,12 @@ export function setupAPIClient() {
     (response) => {
       return response;
     },
-    (err: AxiosError) => {
+    (err) => {
       return new Promise(async (resolve, reject) => {
         const originalReq = err.config;
-        if (
-          err.response?.data.status === 401 &&
-          err.config &&
-          !err.config.data._retry
-        ) {
-          originalReq.data._retry = true;
+
+        if (err.response.status === 401 && err.config && !err.config._retry) {
+          originalReq._retry = true;
 
           try {
             const userCollection = database.get<ModelUser>('users');

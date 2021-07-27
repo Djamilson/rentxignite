@@ -71,14 +71,22 @@ export function Scheduling() {
 
   async function loadDateRental(): Promise<void> {
     try {
-      const res = await api.get(`rentals/cars/${car.id}`);
-
-      const intervalDisabled = generateDateDisabled(res.data);
-
-      setMarkedDatesDisabled(intervalDisabled);
+      api
+        .get(`rentals/cars/${car.id}`)
+        .then((res) => {
+          const intervalDisabled = generateDateDisabled(res.data);
+          setMarkedDatesDisabled(intervalDisabled);
+        })
+        .catch(function (error) {
+          console.log('error: 03 rental', error);
+          throw new Error(error);
+        });
     } catch (error) {
       navigation.goBack();
-      Alert.alert('Tivemos uma falha!', 'Tente novamente!');
+      Alert.alert(
+        'Ooops!',
+        'Tivemos um problema ao tenta carregar o calendário , tente novamente!',
+      );
     } finally {
       setLoading(false);
     }

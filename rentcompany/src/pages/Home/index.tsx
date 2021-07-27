@@ -53,13 +53,21 @@ export function Home() {
           database,
           pullChanges: async ({}) => {
             try {
+              console.log('Iníco::');
+
               const { data } = await api.get(`cars/sync/pull`, {
                 params: { rentals: JSON.stringify(res) },
               });
 
+              console.log('veio aqui: Início::', JSON.stringify(data, null, 2));
               const { changes, latestVersion } = data;
               return { changes, timestamp: latestVersion };
             } catch (error) {
+              console.log('Error da porra:', error.message);
+
+              console.log('Error da porra:', error.response.data);
+
+              console.log('Error da porra:', error);
               throw new Error(error);
             }
           },
