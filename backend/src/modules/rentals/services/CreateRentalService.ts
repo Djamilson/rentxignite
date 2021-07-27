@@ -6,6 +6,7 @@ import { ICarsRepository } from '@modules/cars/repositories/ICarsRepository';
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import { IDateProvider } from '@shared/container/providers/DateProvider/IDateProvider';
 import IMailProvider from '@shared/container/providers/MailProvider/models/IMailProvider';
 import AppError from '@shared/errors/AppError';
@@ -40,6 +41,9 @@ class CreateRentalService {
 
     @inject('MailProvider')
     private mailProvider: IMailProvider,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   async execute({
@@ -167,6 +171,8 @@ class CreateRentalService {
         },
       },
     });
+
+    await this.cacheProvider.invalidate(`rentals:${userExists.id}`);
 
     return myRental;
   }

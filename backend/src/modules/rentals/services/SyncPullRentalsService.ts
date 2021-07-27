@@ -1,5 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+
 import { Rental } from '../infra/typeorm/entities/Rental';
 import { IRentalsRepository } from '../repositories/IRentalsRepository';
 
@@ -41,8 +43,8 @@ interface IResRental {
 }
 
 interface IResponseData {
-  created: IResRental[];
-  updated: IResRental[];
+  created: IResRental[] | [];
+  updated: IResRental[] | [];
   deleted: [];
 }
 
@@ -81,6 +83,9 @@ class SyncPullRentalsService {
   constructor(
     @inject('RentalsRepository')
     private rentalsRepository: IRentalsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({ user_id, rentals }: IRequest): Promise<IResponseData> {
@@ -89,6 +94,16 @@ class SyncPullRentalsService {
 
     let flagOnlyNews = [] as Rental[] | undefined;
     let flagOnlyUpdated = [] as Rental[] | undefined;
+
+    const cachekey = `rentals:${user_id}`;
+
+    const myCacheRentals = await this.cacheProvider.recover<IResponseData>(
+      cachekey,
+    );
+
+    if (myCacheRentals) {
+      return myCacheRentals;
+    }
 
     const rentalsBD = await this.rentalsRepository.listRentalByUserId(user_id);
 
@@ -120,11 +135,13 @@ class SyncPullRentalsService {
     onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
     onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
 
-    return {
+    await this.cacheProvider.save(cachekey, {
       created: onlyNews || [],
       updated: onlyUpdated || [],
       deleted: [],
-    };
+    });
+
+    return { created: onlyNews || [], updated: onlyUpdated || [], deleted: [] };
   }
 }
 
