@@ -139,6 +139,11 @@ export function ForgotPassword() {
 
   async function handleValidationCod() {
     try {
+      if (value === '') {
+        Alert.alert('Ooops!', 'Você deve entrar com o código de redefinção.');
+        return;
+      }
+      
       const { data } = await api.post('/passwords/validationCode', {
         code: value,
       });

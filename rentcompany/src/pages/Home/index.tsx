@@ -94,12 +94,18 @@ export function Home() {
     async function loadCars() {
       try {
         const carCollection = database.get<ModelCar>('cars');
-        const cars = await carCollection.query().fetch();
-
-        if (isMounted) {
-          setCars(cars);
-        }
-      } catch {
+        const cars = await carCollection
+          .query()
+          .fetch()
+          .then((res) => {
+            setCars(res);
+          })
+          .catch(function (error) {
+            console.log('error: 01', error);
+            throw new Error(error);
+          });
+      } catch (error) {
+        console.log('error: 03', error);
       } finally {
         if (isMounted) {
           setLoading(false);

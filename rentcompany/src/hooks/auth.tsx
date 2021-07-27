@@ -85,14 +85,17 @@ function AuthProvider({ children }: AuthProviderProps) {
                 }
               })
               .catch(function (error) {
+                console.log('error: 03', error);
                 throw new Error(error);
               });
           });
         })
         .catch(function (error) {
+          console.log('error: 02', error);
           throw new Error(error);
         });
     } catch (error) {
+      console.log('error: 03', error);
       throw new Error(error);
     }
   }
