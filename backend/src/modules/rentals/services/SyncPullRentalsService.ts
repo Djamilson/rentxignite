@@ -104,13 +104,14 @@ class SyncPullRentalsService {
     );
     console.log('Passou:: 01', JSON.stringify(myCacheRentals, null, 2));
 
-    /* if (myCacheRentals === null) {
+    if (myCacheRentals === null) {
+      console.log('==>>Estou no null:: 01<<==');
       return {
         created: onlyNews || [],
         updated: onlyUpdated || [],
         deleted: [],
       };
-    } */
+    }
 
     console.log('Passou:: 02', JSON.stringify(myCacheRentals, null, 2));
 
