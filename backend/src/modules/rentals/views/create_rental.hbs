@@ -5,35 +5,372 @@
     font-size: 18px;
     color:#5f6368;
     line-height: 21px;
+
   }
-  .start_date{
-font-family:Google Sans,Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;
-color:#5f6368;font-size:14px;
- line-height:22px;
- padding:0px 24px 25px 0px"
-  }
+
 </style>
 
-<div class="message-content">
-<p>Olá, {{name}}</p>
-<p>Reserva realizada com sucesso!</p>
 
-<p  class="start_date">
-  <br />
-  Data de início:
-   <br />
-    <strong color="#AEAEB3" fontSize="14">{{start_date}}</strong>
-  <br />
-    à
-  <br />
-   Data fim:
-    <br /><strong color="#AEAEB3" fontSize="14">{{expected_return_date}}</strong>
-  <br />
-</p>
+  <div style="margin: 0; padding: 0">
 
-<p>Agora só deslocar até a locadora mais próximo e fazer a retirada <br />
+              <table
+                style="border-collapse: collapse"
+                width="100%"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+              >
+                <tbody>
+                  <tr>
+                    <td style="line-height: 20px" colspan="3" height="20">
+                      &nbsp;
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="line-height: 1px" height="1"></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table
+                        style="border-collapse: collapse; margin: 0 auto 0 auto"
+                        width="430"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                      >
+                        <tbody>
+                          <tr>
+                            <td>
+                              <table
+                                style="
+                                  border-collapse: collapse;
+                                  margin: 0 auto 0 auto;
+                                  width: 430px;
+                                "
+                                width="430px"
+                                cellspacing="0"
+                                cellpadding="0"
+                                border="0"
+                              >
+                                <tbody>
+                                  <tr>
+                                    <td
+                                      style="display: block; width: 15px"
+                                      width="15"
+                                    >
+                                      &nbsp;&nbsp;&nbsp;
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <table
+                                        style="border-collapse: collapse"
+                                        width="100%"
+                                        cellspacing="0"
+                                        cellpadding="0"
+                                        border="0"
+                                      >
+                                        <tbody>
+                                          <tr>
+                                            <td>
+                                              <table
+                                                style="
+                                                  border-collapse: collapse;
+                                                "
+                                                cellspacing="0"
+                                                cellpadding="0"
+                                                border="0"
+                                              >
+                                                <tbody>
+                                                  <tr>
+                                                    <td
+                                                      style="
+                                                        display: block;
+                                                        width: 20px;
+                                                      "
+                                                      width="20"
+                                                    >
+                                                      &nbsp;&nbsp;&nbsp;
+                                                    </td>
+                                                    <td>
+                                                      <table
+                                                        style="
+                                                          border-collapse: collapse;
+                                                        "
+                                                        cellspacing="0"
+                                                        cellpadding="0"
+                                                        border="0"
+                                                      >
+                                                        <tbody>
+                                                          <tr>
+                                                            <td>
+                                                              <p
+                                                                style="
+                                                                  margin: 10px 0
+                                                                    10px 0;
+                                                                  color: #565a5c;
+                                                                  font-size: 18px;
+                                                                "
+                                                              >
+                                                                Olá, {{name}}!
+                                                                <br />
+                                                              </p>
 
-do seu veículo!</p>
-<p>Obrigado! <br /> <strong>Equipe da LocalX</strong></p>
+                                                              <p
+                                                                style="
+                                                                  margin: 10px 0
+                                                                    10px 0;
+                                                                  color: #565a5c;
+                                                                  font-size: 18px;
+                                                                "
+                                                              >
+                                                                Reserva
+                                                                realizada com
+                                                                sucesso!
+                                                              </p>
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td
+                                                              style="
+                                                                line-height: 20px;
+                                                              "
+                                                              height="20"
+                                                            >
+                                                              &nbsp;
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td
+                                                              style="
+                                                                border-collapse: collapse;
+                                                                border-radius: 3px;
+                                                                text-align: center;
+                                                                display: block;
+                                                                padding: 10px
+                                                                  16px 14px 16px;
+                                                                margin: 0 2px 0
+                                                                  auto;
+                                                                min-width: 80px;
+                                                              "
+                                                            >
+                                                              <p
+                                                                style="
+                                                                  margin: 10px 0
+                                                                    10px 0;
+                                                                  color: #565a5c;
+                                                                  font-size: 18px;
+                                                                "
+                                                              >
+                                                                Datas reservadas
+                                                              </p>
+                                                              <p
+                                                                style="
+                                                                  margin: 10px 0
+                                                                    10px 0;
+                                                                  color: ##aeaeb3;
+                                                                  font-size: 18px;
+                                                                "
+                                                              >
+                                                                De
+                                                                {{start_date}}
+                                                                até
+                                                                {{expected_return_date}}
+                                                                <br />
+                                                              </p>
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td
+                                                              style="
+                                                                line-height: 20px;
+                                                              "
+                                                              height="20"
+                                                            >
+                                                              &nbsp;
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td>
+                                                              <p
+                                                                style="
+                                                                  margin: 10px 0
+                                                                    10px 0;
+                                                                  color: #565a5c;
+                                                                  font-size: 18px;
+                                                                "
+                                                              >
+                                                                Agora só
+                                                                deslocar até a
+                                                                locadora mais
+                                                                próximo e fazer
+                                                                a retirada do
+                                                                seu veículo!
+                                                              </p>
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td>
+                                                              <table
+                                                                style="
+                                                                  border-collapse: collapse;
+                                                                "
+                                                                width="390"
+                                                                cellspacing="0"
+                                                                cellpadding="0"
+                                                                border="0"
+                                                              >
+                                                                <tbody>
+                                                                  <tr>
+                                                                    <td
+                                                                      style="
+                                                                        border-collapse: collapse;
+                                                                        border-radius: 3px;
+                                                                        text-align: center;
+                                                                        display: block;
+                                                                        padding: 10px
+                                                                          16px
+                                                                          14px
+                                                                          16px;
+                                                                        margin: 0
+                                                                          2px 0
+                                                                          auto;
+                                                                        min-width: 80px;
+                                                                      "
+                                                                    >
+                                                                      <p>
+                                                                        Obrigado!
+                                                                        <br />
+                                                                        <strong
+                                                                          >Equipe
+                                                                          da
+                                                                          LocalX</strong
+                                                                        >
+                                                                      </p>
+                                                                    </td>
+                                                                  </tr>
+                                                                </tbody>
+                                                              </table>
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td
+                                                              style="
+                                                                line-height: 20px;
+                                                              "
+                                                              height="20"
+                                                            >
+                                                              &nbsp;
+                                                            </td>
+                                                          </tr>
+                                                        </tbody>
+                                                      </table>
+                                                    </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table
+                        style="
+                          border-collapse: collapse;
+                          margin: 0 auto 0 auto;
+                          width: 100%;
+                          max-width: 600px;
+                        "
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                      >
+                        <tbody>
+                          <tr>
+                            <td style="line-height: 4px" colspan="3" height="4">
+                              &nbsp;
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="width: 15px" width="15px"></td>
+                            <td style="display: block; width: 20px" width="20">
+                              &nbsp;&nbsp;&nbsp;
+                            </td>
+                            <td style="text-align: center">
+                              <div style="height: 10px"></div>
+                              <div
+                                style="
+                                  color: #abadae;
+                                  font-size: 11px;
+                                  margin: 0 auto 5px auto;
+                                "
+                              >
+                                © RentalX, Quadra 1003 sul, Palmas-TO <br />
+                              </div>
+                              <div
+                                style="
+                                  color: #abadae;
+                                  font-size: 11px;
+                                  margin: 0 auto 5px auto;
+                                "
+                              >
+                                Esta mensagem foi enviada para
+                                <a
+                                  style="
+                                    color: #abadae;
+                                    text-decoration: underline;
+                                  "
+                                  >{{email}}</a
+                                >
+                                e destina a {{name}}. Não é sua conta?
+                                <a
+                                  href="#"
+                                  style="
+                                    color: #abadae;
+                                    text-decoration: underline;
+                                  "
+                                  target="_blank"
+                                  data-saferedirecturl="#"
+                                  >Remova seu email</a
+                                >
+                                dessa conta. <br />
+                              </div>
+                            </td>
+                            <td style="display: block; width: 20px" width="20">
+                              &nbsp;&nbsp;&nbsp;
+                            </td>
+                            <td style="width: 15px" width="15px"></td>
+                          </tr>
+                          <tr>
+                            <td
+                              style="line-height: 32px"
+                              colspan="3"
+                              height="32"
+                            >
+                              &nbsp;
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="line-height: 20px" colspan="3" height="20">
+                      &nbsp;
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-</div>
+    </div>

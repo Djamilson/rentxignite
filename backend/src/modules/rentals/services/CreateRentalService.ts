@@ -53,17 +53,19 @@ class CreateRentalService {
     expected_return_date,
   }: IRequest): Promise<Rental | undefined> {
     const userExists = await this.usersRepository.findById(user_id);
-
+    console.log('Errro mm 001');
     if (!userExists) {
       throw new AppError('There not find any user with the givan id', 401);
     }
 
     const carExists = await this.carsRepository.findById(car_id);
 
+    console.log('Errro mm 013');
     if (!carExists) {
       throw new AppError('There not find any car with the givan id', 402);
     }
 
+    console.log('Errro mm 014');
     const compareDateFormatStart = `${format(
       startDate,
       'yyyy-MM-dd',
@@ -74,10 +76,12 @@ class CreateRentalService {
       'yyyy-MM-dd',
     )}T23:59:59.000Z`;
 
+    console.log('Errro mm 01115');
     if (isBefore(parseISO(compareDateFormatStart), Date.now())) {
       throw new AppError("You can't create an rental on a past date.", 403);
     }
 
+    console.log('Errro mm 011116');
     if (
       isBefore(
         parseISO(compareDateFormatexpectedReturn),
@@ -90,6 +94,7 @@ class CreateRentalService {
       );
     }
 
+    console.log('Errro mm 01117');
     const myArrayDate = this.dateProvider.arrayDates(
       startDate,
       expected_return_date,
@@ -99,6 +104,7 @@ class CreateRentalService {
       car_id,
     );
 
+    console.log('Errro mm 01118');
     const userUnavailables = await this.rentalsRepository.listOpenRentalByUserId(
       user_id,
     );
@@ -108,19 +114,23 @@ class CreateRentalService {
       carUnavailables,
     );
 
+    console.log('Errro mm 01119');
+
     if (checkRentalCar) {
       throw new AppError('Invalid return time car!', 405);
     }
 
+    console.log('Errro mm 011130');
     const checkRentalUser = this.dateProvider.checkDateAvaileble(
       myArrayDate,
       userUnavailables,
     );
 
+    console.log('Errro mm 0111130');
     if (checkRentalUser) {
       throw new AppError('Invalid return time user!', 406);
     }
-    //
+    console.log('Errro mm 01111');
 
     const myRental = await this.rentalsRepository.create({
       user_id,
@@ -134,20 +144,27 @@ class CreateRentalService {
       ),
     });
 
+    console.log('Errro mm 01');
+
     const dateFormattedStart = format(
       new Date(compareDateFormatStart),
       'dd/MM/yyyy',
     );
+
+    console.log('Errro mm 02');
 
     const dateFormattedExpected_return = format(
       new Date(compareDateFormatexpectedReturn),
       'dd/MM/yyyy',
     );
 
+    console.log('Errro mm 03');
     await this.notificationsRepository.create({
       recipient_id: myRental.id,
       content: `Nova reserva para ${dateFormattedStart} a ${dateFormattedExpected_return} `,
     });
+
+    console.log('Errro mm 04');
 
     const createRentalTemplate = path.resolve(
       __dirname,
@@ -165,6 +182,7 @@ class CreateRentalService {
       templateData: {
         file: createRentalTemplate,
         variables: {
+          email: userExists.person.email,
           name: userExists.person.name,
           start_date: dateFormattedStart,
           expected_return_date: dateFormattedExpected_return,
@@ -172,13 +190,21 @@ class CreateRentalService {
       },
     });
 
+    console.log('Errro mm 05');
+
     const cachekey = `rentals:${userExists.id}`;
 
-    await this.cacheProvider.save(cachekey, {
-      created: [myRental],
-      updated: [],
-      deleted: [],
-    });
+    try {
+      await this.cacheProvider.save(cachekey, {
+        created: [myRental],
+        updated: [],
+        deleted: [],
+      });
+
+      console.log('Errro mm 06');
+    } catch (error) {
+      console.log('Errro mm 0996', error);
+    }
 
     return myRental;
   }

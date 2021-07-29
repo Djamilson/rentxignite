@@ -102,50 +102,59 @@ class SyncPullRentalsService {
     const myCacheRentals = await this.cacheProvider.recover<IResponseData>(
       cachekey,
     );
-    console.log('Passou:: 01', JSON.stringify(myCacheRentals, null, 2));
+    // console.log('Passou:: 01', JSON.stringify(myCacheRentals, null, 2));
 
-    if (myCacheRentals === null) {
+    /* if (myCacheRentals === null) {
       console.log('==>>Estou no null:: 01<<==');
-      return {
-        created: onlyNews || [],
-        updated: onlyUpdated || [],
-        deleted: [],
-      };
-    }
 
-    console.log('Passou:: 02', JSON.stringify(myCacheRentals, null, 2));
+  } else {
+      */
+    // console.log('Passou:: 02', JSON.stringify(myCacheRentals, null, 2));
 
-    const rentalsBD = await this.rentalsRepository.listRentalByUserId(user_id);
+    if (myCacheRentals !== null) {
+      const rentalsBD = await this.rentalsRepository.listRentalByUserId(
+        user_id,
+      );
 
-    if (rentals.length < 1) {
-      flagOnlyNews = rentalsBD;
-    } else {
-      flagOnlyUpdated = rentalsBD?.filter(item => {
-        const update = rentals?.find(
-          (rentalUse: IRes) =>
-            item.id === rentalUse.id &&
-            differenceInMilliseconds(
-              item.updated_at,
-              parseISO(rentalUse.updated_at_),
-            ) !== 0,
-        );
+      if (rentals.length < 1) {
+        flagOnlyNews = rentalsBD;
+      } else {
+        flagOnlyUpdated = rentalsBD?.filter(item => {
+          // console.log('Estou aqui:', item);
+          const update = rentals?.find((rentalUse: IRes) => {
+            if (
+              item.id === rentalUse.id &&
+              differenceInMilliseconds(
+                item.updated_at,
+                parseISO(rentalUse.updated_at_),
+              ) !== 0
+            ) {
+              console.log('update:: ', update);
 
-        if (update) return item;
-      });
+              console.log(rentalUse.updated_at_);
 
-      flagOnlyNews = rentalsBD?.filter(item => {
-        const existRental = rentals?.find(
-          rentalUse => item.id === rentalUse.id,
-        );
+              console.log(parseISO(rentalUse.updated_at_));
+              return item;
+            }
+          });
 
-        if (!existRental) return item;
-      });
+          if (update) return item;
+        });
+
+        flagOnlyNews = rentalsBD?.filter(item => {
+          const existRental = rentals?.find(
+            rentalUse => item.id === rentalUse.id,
+          );
+
+          if (!existRental) return item;
+        });
+      }
+
+      await this.cacheProvider.invalidate(`rentals:${user_id}`);
     }
 
     onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
     onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
-
-    await this.cacheProvider.invalidate(`rentals:${user_id}`);
 
     return { created: onlyNews || [], updated: onlyUpdated || [], deleted: [] };
   }
