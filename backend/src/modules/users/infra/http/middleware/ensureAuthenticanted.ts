@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
+// import * as jwt from 'jsonwebtoken';
 
 import authConfig from '@config/auth';
 
@@ -40,11 +41,14 @@ export function ensureAuthenticated(
 
     return next();
   } catch (err) {
-    if (err) {
-      if (err.name === 'TokenExpiredError') {
-        throw new AppError('token.invalid!', 401);
-      }
+    console.log('errro::::: SEMPRE', err.name);
+    if (err && err.name === 'TokenExpiredError') {
+      throw new AppErrorAuth('Token invalid.', 'token.invalid!', 401);
     }
-    throw new AppErrorAuth('Token invalid.', 'token.invalid', 401);
+
+    /* if (err instanceof jwt.TokenExpiredError) {
+      throw new AppErrorAuth('Token invalid.', 'token.invalid!', 401);
+    } */
+    throw new AppError('Token invalid.', 401);
   }
 }

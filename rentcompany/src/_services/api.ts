@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 import * as Device from 'expo-device';
 
@@ -23,7 +23,20 @@ if (__DEV__) {
 baseURL = `http://${LOCALHOST}:${PORT}`;
 
 let isRefreshing = false;
-let failedRequestsQueue: any[] = [];
+
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
 
 export function setupAPIClient() {
   const api = axios.create({
@@ -34,71 +47,70 @@ export function setupAPIClient() {
     (res) => {
       return res;
     },
-    async (error: AxiosError) => {
-     
-      if (error.response?.status === 401) {
-        if (error.response.data?.message === 'token.invalid!') {
-          const originalConfig = error.config;
+    async (error) => {
+      //console.log('Erro na api: error.isAxiosError', error.isAxiosError);
 
-          if (!isRefreshing) {
-            isRefreshing = true;
+     // console.log('Erro na api: 03 error.stack', error.stack);
 
-            try {
-              const userCollection = database.get<ModelUser>('users');
-              await database.action(async () => {
-                const userSelected = await userCollection.query().fetch();
+     // console.log('Erro na api:', error.name);
 
-                api
-                  .post(`refresh`, {
-                    token: userSelected[0].refresh_token,
-                    device,
-                  })
-                  .then(async (res) => {
-                    try {
-                      const { token, refreshToken } = res.data;
+      const originalRequest = error.config;
 
-                      await userSelected[0].update((userData) => {
-                        (userData.token = token),
-                          (userData.refresh_token = refreshToken);
-                      });
-
-                      api.defaults.headers['Authorization'] = `Bearer ${token}`;
-
-                      failedRequestsQueue.forEach((req) =>
-                        req.onSuccess(token),
-                      );
-                      failedRequestsQueue = [];
-                    } catch (err) {
-                      failedRequestsQueue.forEach((req) => req.onFailure(err));
-                      failedRequestsQueue = [];
-                    } finally {
-                      isRefreshing = false;
-                    }
-                  })
-                  .catch(function (error) {
-                    throw new Error(error);
-                  });
-              });
-            } catch (err) {
-              throw new Error(err);
-            }
-          }
-
-          return new Promise((resolve, reject) => {
-            failedRequestsQueue.push({
-              onSuccess: (token: string) => {
-                originalConfig.headers['Authorization'] = `Bearer ${token}`;
-
-                resolve(api(originalConfig));
-              },
-              onFailure: (err: AxiosError) => {
-                reject(err);
-              },
+      if (error.response.status === 500 && !originalRequest._retry) {
+        if (isRefreshing) {
+          return new Promise(function (resolve, reject) {
+            failedQueue.push({ resolve, reject });
+          })
+            .then((token) => {
+              originalRequest.headers['Authorization'] = 'Bearer ' + token;
+              return api.request(originalRequest);
+            })
+            .catch((err) => {
+              return Promise.reject(err);
             });
-          });
-        } else {
-          return Promise.reject(new AuthTokenError());
         }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+        let refresh_token: string;
+        let userSelected: ModelUser[];
+
+        try {
+          const userCollection = database.get<ModelUser>('users');
+
+          await database.action(async () => {
+            userSelected = await userCollection.query().fetch();
+            refresh_token = userSelected[0].refresh_token;
+          });
+        } catch (err) {}
+
+        return new Promise((resolve, reject) => {
+          api
+            .post(`refresh`, {
+              token: refresh_token,
+              device,
+            })
+            .then(async (res: any) => {
+              const { token, refreshToken } = res.data;
+
+              await userSelected[0].update((userData) => {
+                (userData.token = token),
+                (userData.refresh_token = refreshToken);
+              });
+
+              api.defaults.headers['Authorization'] = `Bearer ${token}`;
+
+              processQueue(null, token);
+              resolve(api(originalRequest));
+            })
+            .catch((err: any) => {
+              processQueue(err, null);
+              reject(err);
+            })
+            .then(() => {
+              isRefreshing = false;
+            });
+        });
       }
 
       return Promise.reject(error);

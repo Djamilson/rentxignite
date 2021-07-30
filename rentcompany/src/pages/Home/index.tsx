@@ -53,17 +53,20 @@ export function Home() {
           database,
           pullChanges: async ({}) => {
             try {
-              console.log('Iníco::');
+              console.log('Inciando no Home');
 
               const { data } = await api.get(`cars/sync/pull`, {
                 params: { rentals: JSON.stringify(res) },
               });
 
-              console.log('veio aqui: Início::', JSON.stringify(data, null, 2));
+              console.log(
+                'veio aqui: Início:: home',
+                JSON.stringify(data, null, 2),
+              );
               const { changes, latestVersion } = data;
               return { changes, timestamp: latestVersion };
             } catch (error) {
-              console.log('Error da porra:', error.message);
+              console.log('Agora vai Error da porra: Home', error.response.data);
 
               console.log('Error da porra:', error.response.data);
 
@@ -83,10 +86,15 @@ export function Home() {
                   avatar: userMe.updated[0].person_avatar,
                   privacy: userMe.updated[0]._privacy,
                 };
+console.log('Home E: 02=>>');
 
                 await api.post('users/mobiles/sync', user);
               }
             } catch (error) {
+              console.log('Home Error da porra: 02', error.message);
+
+              console.log('Home Error da porra: ==> 02', error.response.data);
+
               throw new Error(error);
             }
           },
@@ -97,34 +105,30 @@ export function Home() {
   }
 
   useEffect(() => {
-    let isMounted = true;
-
     async function loadCars() {
       try {
         const carCollection = database.get<ModelCar>('cars');
-        const cars = await carCollection
+        await carCollection
           .query()
           .fetch()
           .then((res) => {
+            console.log('Passoue: 01', res);
             setCars(res);
           })
           .catch(function (error) {
             console.log('error: 01', error);
             throw new Error(error);
           });
+
+        console.log('Passoue: 0001');
       } catch (error) {
         console.log('error: 03', error);
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     }
 
     loadCars();
-    return () => {
-      isMounted = false;
-    };
   }, [flagUpdateCars]);
 
   useEffect(() => {

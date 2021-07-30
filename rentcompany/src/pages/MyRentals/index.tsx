@@ -112,17 +112,22 @@ export function MyRentals() {
           database,
           pullChanges: async () => {
             try {
-              const { data } = await api.get(`rentals/sync/pull`, {
+              console.log('Inciando no My rental');
+
+              const { data: myDate } = await api.get(`rentals/sync/pull`, {
                 params: { rentals: JSON.stringify(res) },
               });
 
-              console.log('data:::bd: passou ', JSON.stringify(data, null, 2));
-              const { changes, latestVersion } = data;
+              const { changes, latestVersion } = myDate;
 
+              console.log(
+                'My rental data:::bd: passou ',
+                JSON.stringify(myDate, null, 2),
+              );
               return { changes, timestamp: latestVersion };
             } catch (error) {
-              console.log('=>>02', error.message);
-              console.log('=>>02', error.response.data);
+              console.log('=>>0222 My rental', error);
+              console.log('=>>03 my rental', error.response.data);
 
               console.log('Pega fogo cabaré:::', error);
               throw new Error(error);
@@ -181,9 +186,8 @@ export function MyRentals() {
               }),
             );
           });
-      } catch(erro) {
-        console.log("=>>>022", erro);
-
+      } catch (erro) {
+        console.log('=>>>022', erro);
       } finally {
         if (isMounted) {
           setLoading(false);
