@@ -33,6 +33,7 @@ interface AuthContexData {
   signOut: () => void;
   updateUser: (user: User) => void;
   loading: boolean;
+  refreshToken: () => any;
 }
 
 const AuthContex = createContext<AuthContexData>({} as AuthContexData);
@@ -135,6 +136,65 @@ function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function refreshToken() {
+    try {
+      const device = Device.modelName;
+
+      const userCollection = database.get<ModelUser>('users');
+      await database
+        .action(async () => {
+          const userSelected = await userCollection.query().fetch();
+
+          let re = await api
+            .post(`refresh`, {
+              token: userSelected[0].refresh_token,
+              device,
+            })
+            .then(async (res: any) => {
+              console.log('Consegui o retorno do banco', res);
+              const { token, refreshToken } = res.data;
+              console.log('Consegui o retorno do banco', token, refreshToken);
+
+              api.defaults.headers.authorization = `Bearer ${token}`;
+
+              await userSelected[0]
+                .update((userData: ModelUser) => {
+                  (userData.token = token),
+                    (userData.refresh_token = refreshToken),
+                    (userData.user_id = userData.id),
+                    (userData.person_id = userData.person_id),
+                    (userData.person_name = userData.person_name),
+                    (userData.person_email = userData.person_email),
+                    (userData.person_driver_license =
+                      userData.person_driver_license),
+                    (userData.person_avatar = userData.person_avatar),
+                    (userData.person_status = userData.person_status),
+                    (userData.person_privacy = userData.person_privacy),
+                    (userData.person_avatar = userData.person_avatar),
+                    (userData.person_avatar_url = userData.person_avatar_url);
+                })
+                .then((res) => {
+                  if (res) {
+                    setData(res as unknown as User);
+                  }
+                })
+                .catch(function (error) {
+                  console.log('error: 03', error);
+                  throw new Error(error);
+                });
+            });
+          return re;
+        })
+        .catch(function (error) {
+          console.log('error: 02', error);
+          throw new Error(error);
+        });
+    } catch (error) {
+      console.log('error: 03', error);
+      throw new Error(error);
+    }
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -167,7 +227,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContex.Provider
-      value={{ user: data, loading, signIn, signOut, updateUser }}
+      value={{ user: data, loading, signIn, signOut, updateUser, refreshToken }}
     >
       {children}
     </AuthContex.Provider>
