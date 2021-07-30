@@ -116,10 +116,15 @@ export function MyRentals() {
                 params: { rentals: JSON.stringify(res) },
               });
 
+              console.log('data:::bd: passou ', JSON.stringify(data, null, 2));
               const { changes, latestVersion } = data;
 
               return { changes, timestamp: latestVersion };
             } catch (error) {
+              console.log('=>>02', error.message);
+              console.log('=>>02', error.response.data);
+
+              console.log('Pega fogo cabaré:::', error);
               throw new Error(error);
             }
           },
@@ -176,7 +181,9 @@ export function MyRentals() {
               }),
             );
           });
-      } catch {
+      } catch(erro) {
+        console.log("=>>>022", erro);
+
       } finally {
         if (isMounted) {
           setLoading(false);

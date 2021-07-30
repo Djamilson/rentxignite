@@ -45,6 +45,9 @@ class RentalsRepository implements IRentalsRepository {
         end_date: null,
       },
       relations: ['car'],
+      order: {
+        start_date: 'ASC',
+      },
     });
 
     return rentals;
@@ -56,6 +59,9 @@ class RentalsRepository implements IRentalsRepository {
         user_id,
       },
       relations: ['car', 'car.specifications', 'car.category', 'car.photo'],
+      order: {
+        start_date: 'ASC',
+      },
     });
 
     return rentals;

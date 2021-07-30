@@ -4,20 +4,24 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Generated,
 } from 'typeorm';
 
-@Entity('user_tokens')
-class UserToken {
+@Entity('forgot_tokens')
+class ForgotToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  @Generated('uuid')
   token: string;
 
   @Column()
+  code: string;
+
+  @Column()
   user_id: string;
+
+  @Column()
+  expires_date: Date;
 
   @CreateDateColumn()
   created_at: Date;
@@ -25,4 +29,4 @@ class UserToken {
   @UpdateDateColumn()
   updated_at: Date;
 }
-export default UserToken;
+export { ForgotToken };

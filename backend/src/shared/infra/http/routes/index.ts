@@ -10,7 +10,7 @@ import specificationsRouter from '@modules/specifications/infra/http/routes/spec
 import addressesRouter from '@modules/users/infra/http/routes/addresses.routes';
 import groupsRouter from '@modules/users/infra/http/routes/groups.routes';
 import infoClientsRouter from '@modules/users/infra/http/routes/infoclients.routes';
-import passwordRouter from '@modules/users/infra/http/routes/password.routes';
+import passwordsRouter from '@modules/users/infra/http/routes/passwords.routes';
 import personsRouter from '@modules/users/infra/http/routes/persons.routes';
 import phonesRouter from '@modules/users/infra/http/routes/phones.routes';
 import profileRouter from '@modules/users/infra/http/routes/profile.routes';
@@ -34,7 +34,7 @@ routes.use('/addresses', addressesRouter);
 routes.use('/phones', phonesRouter);
 routes.use('/persons', personsRouter);
 
-routes.use('/password', passwordRouter);
+routes.use('/passwords', passwordsRouter);
 routes.use('/profiles', profileRouter);
 
 routes.use('/cities', citiesRouter);

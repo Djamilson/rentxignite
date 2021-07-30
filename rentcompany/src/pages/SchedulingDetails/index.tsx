@@ -93,6 +93,7 @@ export function SchedulingDetails() {
         message: `Agora você só precisa ir\naté a concessionária da RENTX\npegar o seu automóvel.`,
       });
     } catch (error) {
+      console.log('=>> my erro:',error.message)
       let message = 'Ocorreu uma falha ao far a reserva, tente novamente!';
 
       const { statusCode } = error?.response.data;

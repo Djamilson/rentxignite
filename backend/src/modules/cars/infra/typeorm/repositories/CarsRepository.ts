@@ -98,6 +98,9 @@ class CarsRepository implements ICarsRepository {
   async listAll(): Promise<Car[]> {
     const Cars = await this.repository.find({
       relations: ['specifications', 'category', 'photos', 'photo'],
+      order: {
+        name: 'ASC',
+      },
     });
     return Cars;
   }

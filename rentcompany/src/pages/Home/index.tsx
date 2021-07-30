@@ -53,13 +53,21 @@ export function Home() {
           database,
           pullChanges: async ({}) => {
             try {
+              console.log('Iníco::');
+
               const { data } = await api.get(`cars/sync/pull`, {
                 params: { rentals: JSON.stringify(res) },
               });
 
+              console.log('veio aqui: Início::', JSON.stringify(data, null, 2));
               const { changes, latestVersion } = data;
               return { changes, timestamp: latestVersion };
             } catch (error) {
+              console.log('Error da porra:', error.message);
+
+              console.log('Error da porra:', error.response.data);
+
+              console.log('Error da porra:', error);
               throw new Error(error);
             }
           },
@@ -94,12 +102,18 @@ export function Home() {
     async function loadCars() {
       try {
         const carCollection = database.get<ModelCar>('cars');
-        const cars = await carCollection.query().fetch();
-
-        if (isMounted) {
-          setCars(cars);
-        }
-      } catch {
+        const cars = await carCollection
+          .query()
+          .fetch()
+          .then((res) => {
+            setCars(res);
+          })
+          .catch(function (error) {
+            console.log('error: 01', error);
+            throw new Error(error);
+          });
+      } catch (error) {
+        console.log('error: 03', error);
       } finally {
         if (isMounted) {
           setLoading(false);

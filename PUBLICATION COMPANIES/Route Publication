@@ -1,1 +1,175 @@
+Templates
+
 https://www.notion.so/Chapter-6-LINKS-13c1a14979854c22816e9c3fba471c97
+https://app.rocketseat.com.br/node/chapter-vi-3
+
+
+
+
+##============= ANDROID =============##
+	Screenshots 
+	[App Screenshots - MySkill]
+https://www.figma.com/file/lHVWTkBV06WLHZzVsI2oq5/App-Screenshots-MySkill?node-id=0%3A1
+
+01 - Abra o AndroidStudio;
+02 - Open an Existing Project>
+	Selecione a pasta do projeto>android
+03 - Final Path
+	/mnt/6A663C3A663C0979/DESENVOLVIMENTO/PROJETOS DIVERSOS/LOCADORA VEICULO - IGNITE/rentcompany/android
+	
+	OBS: Caso precise se atualizado pode atualizar;
+
+01 - View>Tool windows>Logcat
+
+ou
+
+na barra de rodapé > Logcat> camera
+
+=== AGORA ICON DO APP =====
+[App Icons_Splash - MySkill]
+https://www.figma.com/file/e2keY5CM51mqIA3ao6XB2z/App-Icons_Splash-MySkill?node-id=0%3A1
+
+01 - Abra o AndroidStudio;
+02 - Open an Existing Project>
+	Selecione a pasta do projeto>android
+03 - Final Path
+	/mnt/6A663C3A663C0979/DESENVOLVIMENTO/PROJETOS DIVERSOS/LOCADORA VEICULO - IGNITE/rentcompany/android
+
+04 - Clicar sa seta do lado direito de Android;
+05 - Selecionar Project;
+06 - Abri a pasta do Projecto em si
+	meuprojecto>app;
+07 - Clicar com o botão direito do mouse sobre app>New>Image Asset
+	07.01 - Foreground Layer
+		07.01.01 - Source Type> Seleciona Image; 
+		07.01.02 - Path > Selecionar a image desejada;
+		07.01.03 - Scaling > Selecionar Yes;
+		
+	07.02 - Background Layer
+		07.02.01 - Source Type> Seleciona Color; 
+		#F4F5F6
+
+08 - Next
+09 - Finish
+
+
+============= AGORA MUDAR O NOME DO APP ==============
+android>app>src>main>res>values>strings.xml
+
+================== AGORA SpashScreen =================
+https://www.notion.so/Splash-Screen-no-Android-8da844d39d834f28bb578e41313ae493
+
+
+========== AGORA GERANDO O BUNDLE NO Android==========
+https://app.rocketseat.com.br/node/chapter-vi-3/group/android-1/lesson/gerando-android-app-bundle-rn
+01 - Dentro da pasta do projeto no VSCODE
+02 - Abra um terminal cd android
+03 - keytool -genkeypair -v -storetype PKCS12 -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+ALTERADO, com deve ficar
+
+keytool -genkeypair -v -storetype PKCS12 -keystore production-android.keystore -alias production-android -keyalg RSA -keysize 2048 -validity 10000
+
+#>informe a senha
+#>sim
+
+##configurando o certificado
+$cd android
+$code ~/.gradle/gradle.properties
+
+>agora add essas linhas de code
+
+MYAPP_UPLOAD_STORE_FILE=production-android
+MYAPP_UPLOAD_KEY_ALIAS=production-android
+MYAPP_UPLOAD_STORE_PASSWORD=****
+MYAPP_UPLOAD_KEY_PASSWORD=*****
+
+
+##=============   IOS   =============##
+
+##configurando a configuração de release
+
+$cd android>app>build.gradle
+
+my path /mnt/6A663C3A663C0979/DESENVOLVIMENTO/PROJETOS DIVERSOS/LOCADORA VEICULO - IGNITE/rentcompany/android/app/build.gradle
+
+
+Mudar a propriedade 
+
+
+def enableProguardInReleaseBuilds = false
+
+>>para 
+
+def enableProguardInReleaseBuilds = true
+
+...android {  
+  ...    defaultConfig { ... } 
+	
+	signingConfigs {       
+		release {         
+			if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {   
+			storeFile file(MYAPP_UPLOAD_STORE_FILE)     
+			storePassword MYAPP_UPLOAD_STORE_PASSWORD  
+			keyAlias MYAPP_UPLOAD_KEY_ALIAS   
+			keyPassword MYAPP_UPLOAD_KEY_PASSWORD 
+			}    
+		} 
+	} 
+	buildTypes {    
+		release {    
+			...         
+			signingConfig signingConfigs.release 
+		}    
+	}
+}
+...
+
+
+===Agora gera o release
+
+#dentro
+$cd android
+$./gradlew bundleRelease 
+
+
+
+##=============   EXPO  =============##
+
+o arquivo app.json deve ficar assim
+
+{
+  "name": "rentcompany",
+  "displayName": "rentcompany",
+
+  "expo": {
+    "name": "Rental App",
+    "slug": "rentcompany",
+    "scheme": "rentcompany",
+    "version": "1.0.0",
+    "icon": "./resources/icon.png",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.rentcompany",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.rentcompany",
+      "versionCode": 1
+    }
+  },
+
+  "splash": {
+    "image": "./assets/splash.png",
+    "backgroundColor": "#1B1B1F"
+  }
+}
+
+###### para gera a build
+
+$expo build:android
+
+$expo build:ios
+
+
+

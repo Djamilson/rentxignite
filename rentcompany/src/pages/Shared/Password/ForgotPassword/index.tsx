@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import * as Yup from 'yup';
+import { useNetInfo } from '@react-native-community/netinfo';
 
-import { BackButton } from '../../../components/BackButton';
-import { Bullet } from '../../../components/Bullet';
-import { Input } from '../../../components/Input';
-import { Button } from '../../../components/Button';
+import { BackButton } from '../../../../components/BackButton';
+import { Bullet } from '../../../../components/Bullet';
+import { Input } from '../../../../components/Input';
+import { Button } from '../../../../components/Button';
 
-import { PasswordInput } from '../../../components/PasswordInput';
+import { api } from '../../../../_services/apiClient';
 
 import {
   KeyboardAvoidingView,
@@ -27,14 +28,7 @@ import {
   Container,
   Header,
   Title,
-  SubTitle,
-  Form,
-  FormTitle,
   Steps,
-  HeaderTop,
-  HeaderTitle,
-  LogoutButton,
-  PhotoContainerView,
   Content,
   Options,
   Option,
@@ -43,10 +37,7 @@ import {
   Footer,
   OffLineInfo,
 } from './styles';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { api } from '../../../_services/apiClient';
-
-import { Animated, Image, Text, View } from 'react-native';
+import { Animated, Image } from 'react-native';
 
 import {
   ACTIVE_CELL_BG_COLOR,
@@ -56,6 +47,7 @@ import {
   NOT_EMPTY_CELL_BG_COLOR,
   styles,
 } from './styles';
+import { useEffect } from 'react';
 
 const { Value, Text: AnimatedText } = Animated;
 
@@ -93,10 +85,10 @@ const animateCell = ({ hasValue, index, isFocused }: IRes) => {
 
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
+  const screenIsFocused = useIsFocused();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [option, setOption] = useState<'dataEmail' | 'inByCode'>('dataEmail');
-  const [byCod, setByCod] = useState<string>('');
 
   const navigation = useNavigation();
   const netInfo = useNetInfo();
@@ -125,37 +117,60 @@ export function ForgotPassword() {
       });
       const data = { email };
       await schema.validate(data);
-      await api.post('/password/forgot', data);
+      await api.post('/passwords/forgot', data);
 
       setOption('inByCode');
+
+      Alert.alert(
+        'Estamos chegando ao fim!',
+        'Acesse o seu email e entre com o código enviado.',
+      );
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         Alert.alert('Ooops!', error.message);
       } else {
         Alert.alert(
-          'Error na autenticação!',
-          'Ocorreu um erro ao tentar fazer login, tente novamente',
+          'Error na solicitação!',
+          'Ocorreu um erro ao tentar fazer a solicitação de redefinição de senha, tente novamente',
         );
       }
     }
   }
 
-  async function hadleValidCod() {
+  async function handleValidationCod() {
     try {
-      console.log('=>>>', value);
-      Alert.alert('esfdsf::: ', value);
-      // await api.post('/password/forgot', data);
+      if (value === '') {
+        Alert.alert('Ooops!', 'Você deve entrar com o código de redefinção.');
+        return;
+      }
+      
+      const { data } = await api.post('/passwords/validationCode', {
+        code: value,
+      });
 
-      setOption('inByCode');
+      navigation.navigate('ResetPassword', data);
     } catch (error) {
+      setValue('');
+
       if (error instanceof Yup.ValidationError) {
         Alert.alert('Ooops!', error.message);
       } else {
-        Alert.alert(
-          'Error na autenticação!',
-          'Ocorreu um erro ao tentar fazer login, tente novamente',
-        );
+        let messageDate = {
+          title: 'Error na solicitação',
+          message:
+            'Ocorreu um erro ao tentar validar o código, tente novamente ou solicite um novo código de validação.',
+        };
+        if (error.response?.data.status === 401) {
+          messageDate = {
+            ...messageDate,
+            message:
+              'Token expirado, gere um novo token. Os tokes tem validade de um dia.',
+          };
+        }
+        Alert.alert(messageDate.title, messageDate.message);
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -207,6 +222,10 @@ export function ForgotPassword() {
     );
   };
 
+  useEffect(() => {
+    setValue('');
+  }, [screenIsFocused]);
+
   return (
     <KeyboardAvoidingView behavior="position" enabled>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -234,7 +253,7 @@ export function ForgotPassword() {
                 active={option === 'inByCode'}
               >
                 <OptionTitle active={option === 'inByCode'}>
-                  Tenho código Redefinir
+                  Tenho código de recuperar
                 </OptionTitle>
               </Option>
             </Options>
@@ -264,10 +283,6 @@ export function ForgotPassword() {
               <>
                 <Section>
                   <Image style={styles.icon} source={source} />
-                  <Text style={styles.subTitle}>
-                    Please enter the verification code{'\n'}
-                    we send to your email address
-                  </Text>
 
                   <CodeField
                     ref={ref}
@@ -285,13 +300,13 @@ export function ForgotPassword() {
                   <Button
                     title="Validar código"
                     enabled={netInfo.isConnected === true && !loading}
-                    onPress={hadleValidCod}
+                    onPress={handleValidationCod}
                     loading={loading}
                   />
 
                   {netInfo.isConnected === false && (
                     <OffLineInfo>
-                      Conecte-se a Internet para ver fazer a solicitação de
+                      Conecte-se a Internet para fazer a solicitação de
                       recuperação de senha!
                     </OffLineInfo>
                   )}

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/native';
 
-import { RectButton, BorderlessButton } from 'react-native-gesture-handler';
+import { BorderlessButton } from 'react-native-gesture-handler';
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -8,7 +8,7 @@ import {
 import { RFValue } from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
-  padding: 0 0px;
+  padding: 0 ${RFValue(44)}px;
   background-color: ${({ theme }) => theme.colors.background_primary};
 `;
 

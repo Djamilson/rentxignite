@@ -1,13 +1,11 @@
 import React from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { Confirmation } from '../pages/Confirmation';
 import { Splash } from '../pages/Splash';
 import { SignIn } from '../pages/Shared/SignIn';
-
-import { ForgotPassword } from '../pages/Shared/ForgotPassword';
-
+import { ForgotPassword } from '../pages/Shared/Password/ForgotPassword';
+import { ResetPassword } from '../pages/Shared/Password/ResetPassword';
 import { SignUpFirstStep } from '../pages/Shared/SignUp/SignUpFirstStep';
 import { SignUpSecondStep } from '../pages/Shared/SignUp/SignUpSecondStep';
 
@@ -22,6 +20,7 @@ export function AuthRoutes() {
       <Screen name="SignUpSecondStep" component={SignUpSecondStep} />
       <Screen name="Confirmation" component={Confirmation} />
 
+      <Screen name="ResetPassword" component={ResetPassword} />
       <Screen name="ForgotPassword" component={ForgotPassword} />
     </Navigator>
   );
