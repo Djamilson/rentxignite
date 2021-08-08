@@ -3,7 +3,7 @@ export default {
     secretToken: process.env.APP_SECRET_TOKEN || 'default',
     secretRefreshToken: process.env.APP_SECRET_REFRESH_TOKEN || 'default',
     secretForgotToken: process.env.APP_SECRET_FORGOT_TOKEN || 'default',
-    expiresInToken: '15m',
+    expiresInToken: '15s',
     expiresInRefreshToken: '30d',
     expiresRefreshTokenDays: 30,
 

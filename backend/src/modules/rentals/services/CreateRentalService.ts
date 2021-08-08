@@ -190,21 +190,9 @@ class CreateRentalService {
       },
     });
 
-    console.log('Errro mm 05');
-
     const cachekey = `rentals:${userExists.id}`;
 
-    try {
-      await this.cacheProvider.save(cachekey, {
-        created: [myRental],
-        updated: [],
-        deleted: [],
-      });
-
-      console.log('Errro mm 06');
-    } catch (error) {
-      console.log('Errro mm 0996', error);
-    }
+    await this.cacheProvider.invalidate(cachekey);
 
     return myRental;
   }
