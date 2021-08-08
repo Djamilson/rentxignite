@@ -1,0 +1,69 @@
+Workflow CI e CD
+
+
+Code Push - OTA
+https://github.com/microsoft/react-native-code-push
+
+$yarn add react-native-code-push
+$expo install sentry-expo
+$expo install expo-application expo-constants expo-device expo-updates
+
+##para instalar o app no celular
+$yarn android --variant=release
+
+$npm install -g appcenter-cli
+$appcenter login
+
+OBS compia código no navegado >
+$appcenter codepush release-react -a RentalX/RentalX-Android -d Staging
+ou
+$appcenter codepush release-react -a RentalX/RentalX-Android -d Production
+
+
+
+
+
+
+    In your android/settings.gradle file, make the following additions at the end of the file:
+
+    ...
+    include ':app', ':react-native-code-push'
+    project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')
+
+    In your android/app/build.gradle file, add the codepush.gradle file as an additional build task definition underneath react.gradle:
+
+    ...
+    apply from: "../../node_modules/react-native/react.gradle"
+    apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+    ...
+
+    Update the MainApplication.java file to use CodePush via the following changes:
+
+    ...
+    // 1. Import the plugin class.
+    import com.microsoft.codepush.react.CodePush;
+
+    public class MainApplication extends Application implements ReactApplication {
+
+        private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+            ...
+
+            // 2. Override the getJSBundleFile method in order to let
+            // the CodePush runtime determine where to get the JS
+            // bundle location from on each app start
+            @Override
+            protected String getJSBundleFile() {
+                return CodePush.getJSBundleFile();
+            }
+        };
+    }
+
+
+
+
+Configurações no Android
+$
+
+Configurações no iOS
+
+Code Push no iOS

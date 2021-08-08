@@ -167,6 +167,8 @@ o arquivo app.json deve ficar assim
 
 ###### para gera a build
 
+$cd android && ./gradlew clean
+
 $expo build:android
 
 $expo build:ios
