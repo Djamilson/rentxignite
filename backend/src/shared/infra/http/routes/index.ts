@@ -5,6 +5,7 @@ import categoriesRouter from '@modules/categories/infra/http/routes/categories.r
 import citiesRouter from '@modules/locality/infra/http/routes/cities.routes';
 import statesRouter from '@modules/locality/infra/http/routes/states.routes';
 import refreshTokenRouter from '@modules/refreshesTokens/infra/http/routes/refresh.token.routes';
+import regulationsRouter from '@modules/regulations/infra/http/routes/regulations.routes';
 import rentalsRouter from '@modules/rentals/infra/http/routes/rentals.routes';
 import specificationsRouter from '@modules/specifications/infra/http/routes/specifications.routes';
 import addressesRouter from '@modules/users/infra/http/routes/addresses.routes';
@@ -45,5 +46,7 @@ routes.use('/specifications', specificationsRouter);
 routes.use('/cars', carsRouter);
 
 routes.use('/rentals', rentalsRouter);
+
+routes.use('/regulations', regulationsRouter);
 
 export default routes;

@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import { parseISO, differenceInMilliseconds } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
@@ -97,6 +96,8 @@ class SyncPullRentalsService {
     let flagOnlyNews = [] as Rental[] | undefined;
     let flagOnlyUpdated = [] as Rental[] | undefined;
     let rentalsBD = [] as Rental[] | undefined;
+
+    console.log('My rentals::=>>>', rentals);
 
     const cachekey = `rentals:${user_id}`;
 

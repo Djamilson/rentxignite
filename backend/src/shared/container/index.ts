@@ -17,6 +17,8 @@ import NotificationsRepository from '@modules/notifications/infra/typeorm/reposi
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 import RefreshesTokensRepository from '@modules/refreshesTokens/infra/typeorm/repositories/RefreshesTokensRepository';
 import IRefreshesTokensRepository from '@modules/refreshesTokens/repositories/IRefreshesTokensRepository';
+import { RegulationsRepository } from '@modules/regulations/infra/typeorm/repositories/RegulationsRepository';
+import { IRegulationsRepository } from '@modules/regulations/repositories/IRegulationsRepository';
 import { RentalsRepository } from '@modules/rentals/infra/typeorm/repositories/RentalsRepository';
 import { IRentalsRepository } from '@modules/rentals/repositories/IRentalsRepository';
 import { SpecificationsRepository } from '@modules/specifications/infra/typeorm/repositories/SpecificationsRepository';
@@ -118,6 +120,11 @@ container.registerSingleton<IPhotosRepository>(
 container.registerSingleton<IRentalsRepository>(
   'RentalsRepository',
   RentalsRepository,
+);
+
+container.registerSingleton<IRegulationsRepository>(
+  'RegulationsRepository',
+  RegulationsRepository,
 );
 
 container.registerSingleton<INotificationsRepository>(
