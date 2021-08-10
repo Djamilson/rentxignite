@@ -18,6 +18,10 @@ export class CreateRegulations1628508617142 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'reading_time',
+            type: 'numeric',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',

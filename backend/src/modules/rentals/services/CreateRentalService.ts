@@ -53,19 +53,17 @@ class CreateRentalService {
     expected_return_date,
   }: IRequest): Promise<Rental | undefined> {
     const userExists = await this.usersRepository.findById(user_id);
-    console.log('Errro mm 001');
+
     if (!userExists) {
       throw new AppError('There not find any user with the givan id', 401);
     }
 
     const carExists = await this.carsRepository.findById(car_id);
 
-    console.log('Errro mm 013');
     if (!carExists) {
       throw new AppError('There not find any car with the givan id', 402);
     }
 
-    console.log('Errro mm 014');
     const compareDateFormatStart = `${format(
       startDate,
       'yyyy-MM-dd',
@@ -76,12 +74,10 @@ class CreateRentalService {
       'yyyy-MM-dd',
     )}T23:59:59.000Z`;
 
-    console.log('Errro mm 01115');
     if (isBefore(parseISO(compareDateFormatStart), Date.now())) {
       throw new AppError("You can't create an rental on a past date.", 403);
     }
 
-    console.log('Errro mm 011116');
     if (
       isBefore(
         parseISO(compareDateFormatexpectedReturn),
@@ -94,7 +90,6 @@ class CreateRentalService {
       );
     }
 
-    console.log('Errro mm 01117');
     const myArrayDate = this.dateProvider.arrayDates(
       startDate,
       expected_return_date,
@@ -104,7 +99,6 @@ class CreateRentalService {
       car_id,
     );
 
-    console.log('Errro mm 01118');
     const userUnavailables = await this.rentalsRepository.listOpenRentalByUserId(
       user_id,
     );

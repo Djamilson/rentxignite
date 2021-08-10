@@ -15,6 +15,9 @@ class Regulation {
   @Column('text')
   regulation: string;
 
+  @Column()
+  reading_time: number;
+
   @CreateDateColumn()
   @Exclude()
   created_at: Date;

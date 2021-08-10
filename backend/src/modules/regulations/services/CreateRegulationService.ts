@@ -20,8 +20,14 @@ class CreateRegulationService {
   ) {}
 
   async execute({ regulation }: IRequest): Promise<Regulation | undefined> {
+    const word_count = regulation.split(' ').length;
+    const average_words_per_minute = 200;
+
+    const reading_time = Math.ceil(word_count / average_words_per_minute);
+
     const myRegulation = await this.regulationsRepository.create({
       regulation,
+      reading_time,
     });
 
     const cachekey = `regulations`;

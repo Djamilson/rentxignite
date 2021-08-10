@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 import AppError from '@shared/errors/AppError';
 
@@ -19,6 +20,9 @@ class UpdateCarPhotoService {
 
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({ photo_id, photoFilename }: IRequest): Promise<Photo> {
@@ -35,6 +39,10 @@ class UpdateCarPhotoService {
     const filename = await this.storageProvider.saveFile(photoFilename);
 
     existsPhoto.photo = filename;
+
+    const cachekey = `cars`;
+
+    await this.cacheProvider.invalidate(cachekey);
 
     return this.photosRepository.create(existsPhoto);
   }

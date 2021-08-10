@@ -97,8 +97,6 @@ class SyncPullRentalsService {
     let flagOnlyUpdated = [] as Rental[] | undefined;
     let rentalsBD = [] as Rental[] | undefined;
 
-    console.log('My rentals::=>>>', rentals);
-
     const cachekey = `rentals:${user_id}`;
 
     let myCacheRentals = await this.cacheProvider.recover<IResponseData>(
@@ -110,6 +108,7 @@ class SyncPullRentalsService {
 
       if (rentals.length < 1) {
         flagOnlyNews = rentalsBD;
+        onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
       } else {
         flagOnlyUpdated = rentalsBD?.filter(item => {
           const update = rentals?.find((rentalUse: IRes) => {
@@ -127,6 +126,8 @@ class SyncPullRentalsService {
           if (update) return item;
         });
 
+        onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
+
         flagOnlyNews = rentalsBD?.filter(item => {
           const existRental = rentals?.find(
             rentalUse => item.id === rentalUse.id,
@@ -134,16 +135,17 @@ class SyncPullRentalsService {
 
           if (!existRental) return item;
         });
+
+        onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
+
+        if (onlyNews === null && onlyUpdated === null) {
+          await this.cacheProvider.save(cachekey, {
+            created: onlyNews || [],
+            updated: onlyUpdated || [],
+            deleted: [],
+          });
+        }
       }
-
-      onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
-      onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
-
-      await this.cacheProvider.save(cachekey, {
-        created: onlyNews || [],
-        updated: onlyUpdated || [],
-        deleted: [],
-      });
 
       myCacheRentals = {
         created: onlyNews || [],

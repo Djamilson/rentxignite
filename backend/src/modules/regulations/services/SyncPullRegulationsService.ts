@@ -17,6 +17,7 @@ interface IRequest {
 interface IResRegulation {
   id: string;
   regulation: string;
+  reading_time: number;
   created_at: Date;
   updated_at_: Date;
 }
@@ -30,6 +31,7 @@ interface IResponseData {
 function regulationX(regulation: Regulation): IResRegulation {
   return {
     id: regulation.id,
+    reading_time: regulation.reading_time,
     regulation: regulation.regulation,
 
     created_at: regulation.created_at,

@@ -8,9 +8,9 @@ class SyncPullCarsController {
     try {
       const syncPullCar = container.resolve(SyncPullCarsService);
 
-      const { rentals } = req.query;
+      const { cars } = req.query;
 
-      const p = (rentals as unknown) as string;
+      const p = (cars as unknown) as string;
 
       const syncPullCars = await syncPullCar.execute({
         cars:
