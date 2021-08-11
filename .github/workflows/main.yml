@@ -12,9 +12,9 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Setup Node.js environment
-      uses: actions/setup-node@v2.1.4
+      uses: actions/setup-node@v2.4.0
       with:
-        node-version: 12.x  
+        node-version: 14.x  
       
     - name: Install dependencies
       run: yarn
@@ -43,5 +43,5 @@ jobs:
           cd ~/app/rentalx
           yarn        
           ./node_modules/.bin/typeorm migration:run
-          pm2 restart courses-server
+          pm2 restart rentalx-server
           
