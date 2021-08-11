@@ -10,6 +10,12 @@ import {
 
 import UsersGroups from '@modules/users/infra/typeorm/entities/UsersGroups';
 
+export type UserRoleType =
+  | 'role-super-admin'
+  | 'role-admin'
+  | 'role-user'
+  | 'role-client';
+
 @Entity('groups')
 class Group {
   @PrimaryGeneratedColumn('uuid')

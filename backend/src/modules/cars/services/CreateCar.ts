@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { ISpecificationsRepository } from '@modules/specifications/repositories/ISpecificationsRepository';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import AppError from '@shared/errors/AppError';
 
 import { Car } from '../infra/typeorm/entities/Car';
@@ -33,6 +34,9 @@ class CreateCar {
 
     @inject('SpecificationsRepository')
     private specificationsRepository: ISpecificationsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   async execute(data: IRequest): Promise<Car | undefined> {
@@ -71,6 +75,10 @@ class CreateCar {
       available: true,
       specifications: existentSpecifications,
     });
+
+    const cachekey = `cars`;
+
+    await this.cacheProvider.invalidatePrefix(cachekey);
 
     return this.carsRepository.save(newCar);
   }

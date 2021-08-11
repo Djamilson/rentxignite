@@ -1,6 +1,8 @@
 import { differenceInMilliseconds, parseISO } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+
 import { Car } from '../infra/typeorm/entities/Car';
 import { ICarsRepository } from '../repositories/ICarsRepository';
 
@@ -10,6 +12,7 @@ interface IRes {
 }
 interface IRequest {
   cars: IRes[];
+  user_id: string;
 }
 
 interface IResCar {
@@ -63,50 +66,70 @@ class SyncPullCarsService {
   constructor(
     @inject('CarsRepository')
     private carsRepository: ICarsRepository,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
-  public async execute({ cars }: IRequest): Promise<IResponseData> {
-    let onlyNews = [] as IResCar[];
-    let onlyUpdated = [] as IResCar[];
+  public async execute({ user_id, cars }: IRequest): Promise<IResponseData> {
+    let onlyNews = [] as IResCar[] | undefined;
+    let onlyUpdated = [] as IResCar[] | undefined;
 
-    let flagOnlyNews = [] as Car[];
-    let flagOnlyUpdated = [] as Car[];
+    let carsBD = [] as Car[] | undefined;
 
-    const carsBD = await this.carsRepository.listAll();
+    const cachekey = `cars:${user_id}`;
 
-    if (cars.length < 1) {
-      flagOnlyNews = carsBD;
-    } else {
-      flagOnlyUpdated = carsBD?.filter(item => {
-        const update = cars?.find(
-          (carUse: IRes) =>
-            item.id === carUse.id &&
-            differenceInMilliseconds(
-              item.updated_at,
-              parseISO(carUse.updated_at_),
-            ) !== 0,
-        );
+    let myCacheCars = await this.cacheProvider.recover<IResponseData>(cachekey);
 
-        if (update) return item;
-      });
+    if (myCacheCars === null) {
+      carsBD = await this.carsRepository.listAll();
 
-      // eslint-disable-next-line consistent-return
-      flagOnlyNews = carsBD?.filter(item => {
-        const existRental = cars?.find(carUse => item.id === carUse.id);
+      if (cars.length < 1) {
+        onlyNews = carsBD?.map(car => carX(car));
+      } else {
+        onlyUpdated = carsBD
+          ?.filter(item => {
+            const update = cars?.find((carUse: IRes) => {
+              if (
+                item.id === carUse.id &&
+                differenceInMilliseconds(
+                  item.updated_at,
+                  parseISO(carUse.updated_at_),
+                ) !== 0
+              ) {
+                return item;
+              }
+            });
 
-        if (!existRental) return item;
-      });
+            if (update) return item;
+          })
+          ?.map(car => carX(car));
+
+        onlyNews = carsBD
+          ?.filter(item => {
+            const existRental = cars?.find(carUse => item.id === carUse.id);
+
+            if (!existRental) return item;
+          })
+          ?.map(car => carX(car));
+
+        if (onlyNews?.length === 0 && onlyUpdated?.length === 0) {
+          await this.cacheProvider.save(cachekey, {
+            created: onlyNews || [],
+            updated: onlyUpdated || [],
+            deleted: [],
+          });
+        }
+      }
+
+      myCacheCars = {
+        created: onlyNews || [],
+        updated: onlyUpdated || [],
+        deleted: [],
+      };
     }
 
-    onlyNews = flagOnlyNews?.map(car => carX(car));
-
-    onlyUpdated = flagOnlyUpdated?.map(car => carX(car));
-
-    return {
-      created: onlyNews,
-      updated: onlyUpdated,
-      deleted: [],
-    };
+    return myCacheCars;
   }
 }
 

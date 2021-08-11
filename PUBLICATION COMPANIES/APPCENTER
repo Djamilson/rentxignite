@@ -1,0 +1,13 @@
+
+$git rm -r --cached . 
+$git add .
+$git commit -am "Remove ignored files"
+
+
+$rm -rf ios/build android/app/build
+
+$yarn start -c
+
+# or if you use npm
+
+$yarn start --reset-cache

@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import { SyncPullCarsService } from '@modules/cars/services/SyncPullCarsService';
+import { SyncPullRegulationsService } from '@modules/regulations/services/SyncPullRegulationsService';
 
-class SyncPullCarsController {
+class SyncPullRegulationsController {
   public async handle(req: Request, res: Response): Promise<Response> {
     try {
-      const syncPullCar = container.resolve(SyncPullCarsService);
+      const syncPullRegulation = container.resolve(SyncPullRegulationsService);
 
-      const { cars } = req.query;
+      const { regulations } = req.query;
 
-      const p = (cars as unknown) as string;
+      const p = (regulations as unknown) as string;
 
-      const syncPullCars = await syncPullCar.execute({
-        cars:
+      const syncPullRentals = await syncPullRegulation.execute({
+        regulations:
           p.length < 3
             ? []
             : p
@@ -27,7 +27,7 @@ class SyncPullCarsController {
       return res.json({
         latestVersion: new Date().getTime(),
         changes: {
-          cars: syncPullCars,
+          regulations: syncPullRentals,
         },
       });
     } catch (error) {
@@ -38,4 +38,4 @@ class SyncPullCarsController {
   }
 }
 
-export { SyncPullCarsController };
+export { SyncPullRegulationsController };

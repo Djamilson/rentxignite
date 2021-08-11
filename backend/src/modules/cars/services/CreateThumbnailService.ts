@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 import AppError from '@shared/errors/AppError';
 
@@ -23,6 +24,9 @@ class CreateThumbnailService {
 
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({ car_id, photoFilename }: IRequest): Promise<Photo> {
@@ -42,6 +46,10 @@ class CreateThumbnailService {
     car.photo = thumbnail;
 
     await this.carsRepository.save(car);
+
+    const cachekey = `cars`;
+
+    await this.cacheProvider.invalidatePrefix(cachekey);
 
     return thumbnail;
   }
