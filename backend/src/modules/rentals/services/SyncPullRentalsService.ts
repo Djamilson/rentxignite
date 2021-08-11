@@ -93,8 +93,8 @@ class SyncPullRentalsService {
     let onlyNews = [] as IResRental[] | undefined;
     let onlyUpdated = [] as IResRental[] | undefined;
 
-    let flagOnlyNews = [] as Rental[] | undefined;
-    let flagOnlyUpdated = [] as Rental[] | undefined;
+    // const flagOnlyNews = [] as Rental[] | undefined;
+    // const flagOnlyUpdated = [] as Rental[] | undefined;
     let rentalsBD = [] as Rental[] | undefined;
 
     const cachekey = `rentals:${user_id}`;
@@ -107,38 +107,37 @@ class SyncPullRentalsService {
       rentalsBD = await this.rentalsRepository.listRentalByUserId(user_id);
 
       if (rentals.length < 1) {
-        flagOnlyNews = rentalsBD;
-        onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
+        onlyNews = rentalsBD?.map(rental => rentalX(rental));
       } else {
-        flagOnlyUpdated = rentalsBD?.filter(item => {
-          const update = rentals?.find((rentalUse: IRes) => {
-            if (
-              item.id === rentalUse.id &&
-              differenceInMilliseconds(
-                item.updated_at,
-                parseISO(rentalUse.updated_at_),
-              ) !== 0
-            ) {
-              return item;
-            }
-          });
+        onlyUpdated = rentalsBD
+          ?.filter(item => {
+            const update = rentals?.find((rentalUse: IRes) => {
+              if (
+                item.id === rentalUse.id &&
+                differenceInMilliseconds(
+                  item.updated_at,
+                  parseISO(rentalUse.updated_at_),
+                ) !== 0
+              ) {
+                return item;
+              }
+            });
 
-          if (update) return item;
-        });
+            if (update) return item;
+          })
+          ?.map(rental => rentalX(rental));
 
-        onlyUpdated = flagOnlyUpdated?.map(rental => rentalX(rental));
+        onlyNews = rentalsBD
+          ?.filter(item => {
+            const existRental = rentals?.find(
+              rentalUse => item.id === rentalUse.id,
+            );
 
-        flagOnlyNews = rentalsBD?.filter(item => {
-          const existRental = rentals?.find(
-            rentalUse => item.id === rentalUse.id,
-          );
+            if (!existRental) return item;
+          })
+          ?.map(rental => rentalX(rental));
 
-          if (!existRental) return item;
-        });
-
-        onlyNews = flagOnlyNews?.map(rental => rentalX(rental));
-
-        if (onlyNews === null && onlyUpdated === null) {
+        if (onlyNews?.length === 0 && onlyUpdated?.length === 0) {
           await this.cacheProvider.save(cachekey, {
             created: onlyNews || [],
             updated: onlyUpdated || [],

@@ -12,6 +12,7 @@ interface IRes {
 }
 interface IRequest {
   cars: IRes[];
+  user_id: string;
 }
 
 interface IResCar {
@@ -70,16 +71,13 @@ class SyncPullCarsService {
     private cacheProvider: ICacheProvider,
   ) {}
 
-  public async execute({ cars }: IRequest): Promise<IResponseData> {
+  public async execute({ user_id, cars }: IRequest): Promise<IResponseData> {
     let onlyNews = [] as IResCar[] | undefined;
     let onlyUpdated = [] as IResCar[] | undefined;
 
-    let flagOnlyNews = [] as Car[] | undefined;
-    let flagOnlyUpdated = [] as Car[] | undefined;
-
     let carsBD = [] as Car[] | undefined;
 
-    const cachekey = `cars`;
+    const cachekey = `cars:${user_id}`;
 
     let myCacheCars = await this.cacheProvider.recover<IResponseData>(cachekey);
 
@@ -87,36 +85,35 @@ class SyncPullCarsService {
       carsBD = await this.carsRepository.listAll();
 
       if (cars.length < 1) {
-        flagOnlyNews = carsBD;
-        onlyNews = flagOnlyNews?.map(car => carX(car));
+        onlyNews = carsBD?.map(car => carX(car));
       } else {
-        flagOnlyUpdated = carsBD?.filter(item => {
-          const update = cars?.find((carUse: IRes) => {
-            if (
-              item.id === carUse.id &&
-              differenceInMilliseconds(
-                item.updated_at,
-                parseISO(carUse.updated_at_),
-              ) !== 0
-            ) {
-              return item;
-            }
-          });
+        onlyUpdated = carsBD
+          ?.filter(item => {
+            const update = cars?.find((carUse: IRes) => {
+              if (
+                item.id === carUse.id &&
+                differenceInMilliseconds(
+                  item.updated_at,
+                  parseISO(carUse.updated_at_),
+                ) !== 0
+              ) {
+                return item;
+              }
+            });
 
-          if (update) return item;
-        });
+            if (update) return item;
+          })
+          ?.map(car => carX(car));
 
-        onlyUpdated = flagOnlyUpdated?.map(car => carX(car));
+        onlyNews = carsBD
+          ?.filter(item => {
+            const existRental = cars?.find(carUse => item.id === carUse.id);
 
-        flagOnlyNews = carsBD?.filter(item => {
-          const existRental = cars?.find(carUse => item.id === carUse.id);
+            if (!existRental) return item;
+          })
+          ?.map(car => carX(car));
 
-          if (!existRental) return item;
-        });
-
-        onlyNews = flagOnlyNews?.map(car => carX(car));
-
-        if (onlyNews === null && onlyUpdated === null) {
+        if (onlyNews?.length === 0 && onlyUpdated?.length === 0) {
           await this.cacheProvider.save(cachekey, {
             created: onlyNews || [],
             updated: onlyUpdated || [],

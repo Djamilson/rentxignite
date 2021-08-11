@@ -44,7 +44,7 @@ class CreateCarPhotoService {
 
     const cachekey = `cars`;
 
-    await this.cacheProvider.invalidate(cachekey);
+    await this.cacheProvider.invalidatePrefix(cachekey);
 
     return photo;
   }

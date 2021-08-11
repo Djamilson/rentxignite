@@ -55,7 +55,7 @@ class UpdateCarService {
 
     const cachekey = `cars`;
 
-    await this.cacheProvider.invalidate(cachekey);
+    await this.cacheProvider.invalidatePrefix(cachekey);
 
     return this.carsRepository.save(myCar);
   }
