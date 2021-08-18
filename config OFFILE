@@ -11,6 +11,9 @@ https://nozbe.github.io/WatermelonDB/Installation.html
 
 $yarn add @nozbe/watermelondb
 $yarn add @babel/plugin-proposal-decorators -D
+$yarn add metro-minify-terser
+
+
 
 OBS: Add os plugins Add ES6 decorators support to your .babelrc file:
 

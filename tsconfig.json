@@ -1,9 +1,10 @@
 [
   {
+    "logging": true,
     "type": "postgres",
     "host": "localhost",
     "port": "",
-    "username": "",
+    "username": "admin",
     "password": "",
     "database": "",
     "entities": ["./dist/modules/**/infra/typeorm/entities/*.js"],
@@ -17,8 +18,11 @@
     "type": "mongodb",
     "host": "localhost",
     "port": "",
+    "username":"",
+    "password":"",
     "database": "",
     "useUnifiedTopology": true,
     "entities": ["./dist/modules/**/infra/typeorm/schemas/*.js"]
   }
 ]
+

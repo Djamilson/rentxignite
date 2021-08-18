@@ -13,7 +13,7 @@ class CarThumbnailController {
 
       const photo = await createCar.execute({
         car_id: carId,
-        photoFilename: req.file.filename,
+        photoFilename: req.file?.filename,
       });
 
       return res.json(classToClass(photo));

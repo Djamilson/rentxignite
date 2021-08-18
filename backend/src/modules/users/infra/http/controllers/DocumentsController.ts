@@ -10,8 +10,6 @@ export default class DocumentsController {
       const user_id = req.user.id;
       const { cpf, birdthDate, rg, rgss } = req.body;
 
-      console.log('req.body:', req.body);
-
       const updatePerson = container.resolve(UpdateDocumentService);
 
       const person = await updatePerson.execute({

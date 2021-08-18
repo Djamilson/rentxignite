@@ -28,4 +28,4 @@ class Notification {
   updated_at: Date;
 }
 
-export default Notification;
+export { Notification };

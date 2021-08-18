@@ -34,6 +34,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-useless-constructor': 'off',
     '@typescript-eslint/camelcase': 'off',
+
     'import/prefer-default-export': 'off',
 
     '@typescript-eslint/interface-name-prefix': [

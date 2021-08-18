@@ -9,10 +9,12 @@ class SyncPullCarsController {
       const syncPullCar = container.resolve(SyncPullCarsService);
 
       const { cars } = req.query;
+      const user_id = req.user.id;
 
       const p = (cars as unknown) as string;
 
       const syncPullCars = await syncPullCar.execute({
+        user_id,
         cars:
           p.length < 3
             ? []
@@ -38,4 +40,5 @@ class SyncPullCarsController {
   }
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export { SyncPullCarsController };

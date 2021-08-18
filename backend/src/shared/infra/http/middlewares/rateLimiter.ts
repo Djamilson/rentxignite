@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
+// eslint-disable-next-line import/no-unresolved
 import redis from 'redis';
 
 import AppError from '@shared/errors/AppError';

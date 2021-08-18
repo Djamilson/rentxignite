@@ -62,59 +62,59 @@ rentxignite/web-build/
 
 # OSX
 #
-rentcompany/.DS_Store
+mobile/.DS_Store
 
 # Xcode
 #
-rentcompany/build/
-rentcompany/*.pbxuser
-rentcompany/!default.pbxuser
-rentcompany/*.mode1v3
-rentcompany/!default.mode1v3
-rentcompany/*.mode2v3
-rentcompany/!default.mode2v3
-rentcompany/*.perspectivev3
-rentcompany/!default.perspectivev3
-rentcompany/xcuserdata
-rentcompany/*.xccheckout
-rentcompany/*.moved-aside
-rentcompany/DerivedData
-rentcompany/*.hmap
-rentcompany/*.ipa
-rentcompany/*.xcuserstate
-rentcompany/project.xcworkspace
+mobile/build/
+mobile/*.pbxuser
+mobile/!default.pbxuser
+mobile/*.mode1v3
+mobile/!default.mode1v3
+mobile/*.mode2v3
+mobile/!default.mode2v3
+mobile/*.perspectivev3
+mobile/!default.perspectivev3
+mobile/xcuserdata
+mobile/*.xccheckout
+mobile/*.moved-aside
+mobile/DerivedData
+mobile/*.hmap
+mobile/*.ipa
+mobile/*.xcuserstate
+mobile/project.xcworkspace
 
 # Android/IntelliJ
 #
-rentcompany/build/
-rentcompany/.idea
-rentcompany/.gradle
-rentcompany/local.properties
-rentcompany/*.iml
-rentcompany/*.hprof
+mobile/build/
+mobile/.idea
+mobile/.gradle
+mobile/local.properties
+mobile/*.iml
+mobile/*.hprof
 
 # node.js
 #
-rentcompany/node_modules/
-rentcompany/npm-debug.log
-rentcompany/yarn-error.log
+mobile/node_modules/
+mobile/npm-debug.log
+mobile/yarn-error.log
 
 # BUCK
-rentcompany/buck-out/
-rentcompany/\.buckd/
-rentcompany/*.keystore
-rentcompany/!debug.keystore
-rentcompany/.env
+mobile/buck-out/
+mobile/\.buckd/
+mobile/*.keystore
+mobile/!debug.keystore
+mobile/.env
 
 # Bundle artifacts
-rentcompany/*.jsbundle
+mobile/*.jsbundle
 
 # CocoaPods
-rentcompany/ios/Pods/
+mobile/ios/Pods/
 
 # Expo
-rentcompany/.expo/
-rentcompany/web-build/
+mobile/.expo/
+mobile/web-build/
 
 
 

@@ -41,7 +41,7 @@ class S3StorageProvider implements IStorageProvider {
         ContentType,
       })
       .promise()
-      .catch(err => {
+      .catch(() => {
         // console.log('Upload failed:', err);
       });
 

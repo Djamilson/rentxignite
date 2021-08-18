@@ -42,8 +42,6 @@ class SyncPullUsersService {
     let user = await this.usersRepository.findById(user_id);
     let test = false;
 
-    console.log('=>>> meu Deus ==>>', user_id, name, driver_license, avatar);
-
     if (!user) {
       throw new AppError('User not found');
     }

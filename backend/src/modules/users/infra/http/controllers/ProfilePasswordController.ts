@@ -10,9 +10,7 @@ export default class ProfileController {
       const user_id = req.user.id;
       const { old_password, password } = req.body;
 
-      console.log('req.body::', req.body);
-
-      const updatePasswordProfile = container.resolve(
+        const updatePasswordProfile = container.resolve(
         UpdateProfilePasswordService,
       );
 

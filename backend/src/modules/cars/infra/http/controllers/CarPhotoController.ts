@@ -14,7 +14,7 @@ class CarPhotoController {
 
       const photo = await createCar.execute({
         car_id: carId,
-        photoFilename: req.file.filename,
+        photoFilename: req.file?.filename,
       });
 
       return res.json(classToClass(photo));
@@ -33,7 +33,7 @@ class CarPhotoController {
 
       const photo = await updateCar.execute({
         photo_id: photoId,
-        photoFilename: req.file.filename,
+        photoFilename: req?.file?.filename,
       });
 
       return res.json(classToClass(photo));

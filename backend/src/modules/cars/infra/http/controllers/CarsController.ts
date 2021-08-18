@@ -10,7 +10,6 @@ export default class CarsController {
   async show(request: Request, response: Response): Promise<Response> {
     const listCarById = container.resolve(ListCarById);
 
-    console.log('Meu carro:', request.params);
     const car = await listCarById.execute(request.params.carId);
 
     return response.status(200).json(car);

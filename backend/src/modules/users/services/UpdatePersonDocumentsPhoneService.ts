@@ -37,7 +37,7 @@ class UpdatePersonDocumentsPhoneService {
 
     phone,
   }: IRequest): Promise<Person> {
-    console.log('My Phone:', phone);
+    
     const newBirdthDate = parse(birdthDate, 'dd/MM/yyyy', new Date());
 
     const user = await this.usersRepository.findById(user_id);

@@ -114,8 +114,6 @@ class AuthenticateUserService {
       expiresRefreshTokenDays,
     );
 
-    console.log('userOut.id, device ', userOut.id, device);
-
     const listRefreshTokensUser = await this.refreshesTokensRepository.findRefreshTokenToUserIdInDevice(
       { user_id: userOut.id, device },
     );

@@ -9,7 +9,7 @@ import { IPhotosRepository } from '../repositories/IPhotosRepository';
 
 interface IRequest {
   photo_id: string;
-  photoFilename: string;
+  photoFilename?: string;
 }
 
 @injectable()
@@ -34,6 +34,10 @@ class UpdateCarPhotoService {
 
     if (existsPhoto && existsPhoto.photo) {
       await this.storageProvider.deleteFile(existsPhoto.photo);
+    }
+
+    if (!photoFilename) {
+      throw new AppError('Photo does not exists.', 401);
     }
 
     const filename = await this.storageProvider.saveFile(photoFilename);

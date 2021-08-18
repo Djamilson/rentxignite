@@ -1,0 +1,383 @@
+#CRIAR O SERVIDOR DIGITAL OCEAN
+
+1- create> create Droplets
+2- Choose an image> Marketplace
+3- Recommended for you > Docker 19.03.12 on Ubuntu
+4- Choose a plan > Shared CPU> Basic
+5- CPU options > Regular Intel with SSD > $5/mo 0$0.007/hour
+6- Choose a datacenter region > New York
+7- Authentication > SSH keys
+	#para gera a chave ssh na sua máquina
+	
+	$ssh-keygen
+	$cd ~/.ssh 
+	$ls
+	$cat id_rsa.pub
+
+	#### copia todo o codigo que aperece e colocar na digital ocean
+8- choose your SSH keys > select
+9- Finalize and create > Choose a hostname > servido-01
+
+
+#configurando dominio digital Ocean e criar IP Float
+
+1- Manege>networking
+	1.1 Add a domain
+	1.2 HOSTNAME
+	 @
+	1.2 WILL DIRECT TO
+	164.90.252.218
+	
+	1.3 create record
+	
+	
+	1.1 Add a domain
+	1.2 HOSTNAME
+	 www.
+	1.2 WILL DIRECT TO
+	164.90.252.218
+	
+	1.3 create record
+	
+
+#Agora configura o servidor
+
+$ ssh root@youIP 
+$ apt update
+$ apt upgrade
+
+
+#Create user
+
+$ adduser deploy
+# criar uma password
+$****
+#não precisa preencher nada
+
+#adicionando permissões para o user
+$usermod -aG sudo deploy
+$ cd /home/deploy/
+$ mkdir .ssh
+$ ls -a
+$ cd .ssh/
+$ cp ~/.ssh/authorized_keys .
+$ ls
+$ chown deploy:deploy authorized_keys
+
+$exit
+
+$ssh deply@ip
+
+
+#instalar o NodeJS
+
+# Using Ubuntu
+$curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+$sudo apt-get install -y nodejs
+
+#Install YARN
+$curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+$echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+$sudo apt update
+$sudo apt install yarn
+$yarn -v
+
+
+##execulte o install 
+
+#install docke
+
+$sudo groupadd docker
+$sudo usermod -aG docker $USER
+$exit
+$docker
+$docker ps
+$docker -v
+
+
+---------------------INITIAL-------------------
+Novas instalações Para o serve
+	
+GERAR senha segura
+http://www.md5.cz/
+
+----------POSTGES----------
+#use deve ser o postgres
+$docker run -d --name postgresql -e POSTGRESQL_USERNAME=postgres -e POSTGRESQL_PASSWORD=password0 -e POSTGRESQL_DATABASE=rentalx -p 35432:5432 --restart=always bitnami/postgresql:latest
+
+---------------------END-----------------------
+
+#MongoDB
+$docker run -d --name mongodb -e MONGODB_USERNAME=admin -e MONGODB_PASSWORD=password -e MONGODB_DATABASE=rentalx -p 47017:27017 --restart=always bitnami/mongodb:latest
+---------------------END-----------------------
+
+##install o redis //para execultar as filas de email's
+
+$docker run -d --name redis -e REDIS_PASSWORD=password -p 56379:6379 --restart=always  bitnami/redis:latest  
+
+---------------------END-----------------------
+
+$mkdir app
+$cd app
+$git clone https://github.com/Djamilson/publish-backend-rentalx.git rentalx
+
+#se com typescript compiar
+$cd rentalx
+$sudo cp ormconfig.exemple.json ormconfig.json
+$sudo chmod ugoa+-=rwx ormconfig.json
+$vi ormconfig.json
+
+$sudo cp .env_exemple .env
+$sudo chmod ugoa+-=rwx .env
+
+$vim .env
+ou
+$vim .env
+
+$ i => editar
+$ esc => control + :wq! => sair salvando
+$ esc => control + :q! => sair sem salvar
+$ :w !sudo tee % > /dev/null
+
+#criando usuário
+$docker exec -ti postgresql psql -U postgres
+$Password for user postgres: entra com o password
+$postgres=# CREATE USER djamilson WITH ENCRYPTED PASSWORD 'mypassword';
+$CREATE ROLE
+$postgres=# GRANT ALL PRIVILEGES ON DATABASE rentalx TO djamilson;
+$GRANT
+$postgres=# \q
+$exit
+
+
+#app
+$yarn
+$yarn build
+
+
+#cria table
+$./node_modules/.bin/typeorm migration:run
+
+
+##Instalando o nginx => para gerenciar as portas no servidor
+$sudo apt install nginx
+
+
+###Configure your domain to use SSL
+###configurar ngnix
+$ cd /etc/nginx/sites-enabled
+$ ls -la
+$ rm default
+
+#entra na pasta sites-available
+$ cd ../sites-available
+$ ls
+$ sudo cp default nodedeploy-server
+$ sudo chmod ugoa+-=rwx nodedeploy-server
+$ sudo vim nodedeploy-server 
+$ service nginx restart
+
+
+#primeira configuração tem que ser assim
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        server_name gobarbervip.com.br www.gobarbervip.com.br;
+
+        client_max_body_size 100M;
+
+        location /rentalx/ {
+
+                proxy_pass http://127.0.0.1:3335/;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+
+        }
+}
+
+#INSTALL o CERTIFICADO de pois se não for alterado você alterar para esse arquivo a baixo
+
+server {
+
+        server_name gobarbervip.com.br www.gobarbervip.com.br;
+
+        client_max_body_size 100M;
+
+        location /rentalx/ {
+
+                proxy_pass http://127.0.0.1:3335/;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+        
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/gobarbervip.com.br/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gobarbervip.com.br/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    if ($host = www.gobarbervip.com.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = gobarbervip.com.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+ listen 80 default_server;
+        listen [::]:80 default_server;
+
+        server_name gobarbervip.com.br www.gobarbervip.com.br;
+    return 404; # managed by Certbot
+
+}
+=============================
+
+
+$ cd ../sites-enabled/
+$ ls -la
+$ sudo ln -s /etc/nginx/sites-available/nodedeploy-server /etc/nginx/sites-enabled/
+$ ls -la
+$ sudo nginx -t
+
+#R E I N I C I A NGINX
+##agora reiniciar o nginx
+$sudo service nginx restart
+ou
+$sudo systemctl start nginx
+
+
+##install pm2 para não deixar a nossa aplicação cair
+$sudo yarn global add pm2
+ou
+$apt update && apt install sudo curl && curl -sL https://raw.githubusercontent.com/Unitech/pm2/master/packager/setup.deb.sh | sudo -E bash -
+
+$cd app/rentalx
+$pm2 start dist/shared/infra/http/server.js --name rentalx-server
+$pm2 save
+$pm2 startup systemd
+
+copia a linha e cola
+
+$sudo env PATH=$PATH:/usr/bin /usr/local/share/.config/yarn/global/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy
+
+
+#Tem que ativar todas essas portas
+$sudo ufw allow 3335 
+$sudo ufw allow 443 
+sudo ufw allow http
+$sudo ufw enable
+$sudo ufw app list
+$sudo ufw status
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     LIMIT       Anywhere                  
+2375/tcp                   ALLOW       Anywhere                  
+2376/tcp                   ALLOW       Anywhere                  
+3335                       ALLOW       Anywhere                  
+443                        ALLOW       Anywhere                  
+443/tcp                    ALLOW       Anywhere                  
+80/tcp                     ALLOW       Anywhere                  
+22/tcp (v6)                LIMIT       Anywhere (v6)             
+2375/tcp (v6)              ALLOW       Anywhere (v6)             
+2376/tcp (v6)              ALLOW       Anywhere (v6)             
+3335 (v6)                  ALLOW       Anywhere (v6)             
+443 (v6)                   ALLOW       Anywhere (v6)             
+443/tcp (v6)               ALLOW       Anywhere (v6)             
+80/tcp (v6)                ALLOW       Anywhere (v6)    
+
+
+##SSH
+https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx
+
+
+$sudo apt update
+$sudo apt install snapd
+$sudo snap install snap-store
+
+$sudo snap install core
+$sudo snap refresh core
+$sudo apt-get remove certbot
+$sudo snap install --classic certbot
+$sudo ln -s /snap/bin/certbot /usr/bin/certbot
+$sudo certbot --nginx
+$sudo certbot renew --dry-run
+
+eploy@server02:/etc/nginx/sites-available$ sudo certbot --nginx
+
+Which names would you like to activate HTTPS for?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+1: gobarbervip.com.br
+2: www.gobarbervip.com.br
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Select the appropriate numbers separated by commas and/or spaces, or leave input
+blank to select all options shown (Enter 'c' to cancel): [ENTER]
+
+$ls -la /etc/letsencrypt/live/gobarbervip.com.br/
+#remove certbot link
+$grep -R /etc/letsencrypt/live/example.com/fullchain.pem /etc/nginx/
+#list certifications
+$ sudo certbot certificates
+$ certbot --version
+
+#correção de erro
+$systemctl list-timers | grep certbot
+$snap list
+
+
+
+#CONFIGURAR Workflow CI e CD
+
+1- Criar as variáveis de segurança no Git>Settings>Secrets
+2- Criar:
+	SSH_HOST>IP DA MÁQUIANA
+	SSH_KEY>
+		No terminal digitar da minha maquina
+		$cd .ssh
+		$ssh-keygen
+		$github_actions.pub
+			-Não precisa digitar senha
+		
+		$code github_actions.pub
+			
+			-Agora copiar os dados e colar na digital Ocean
+			-Acessa o servidor na digital ocean
+			
+			$ssh deploy@myip
+			$cd .ssh/
+			$ls
+			$vim authorized_keys
+				colocar no final do arquivo a nossa chave
+				ESC+:wq!
+		$exit
+		$exit
+				
+		Agora na minha máquina		
+		$cd .ssh/
+		$code github_actions
+
+			colocar no git variável SSH_KEY	
+---------------------END-----------------------
+		
+

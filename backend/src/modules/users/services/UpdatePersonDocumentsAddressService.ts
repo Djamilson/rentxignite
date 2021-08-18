@@ -67,8 +67,6 @@ class UpdatePersonDocumentsAddressService {
       city_id,
     });
 
-    console.log('newAddres .....', newAddres);
-
     const newUser = await this.usersRepository.findById(user_id);
 
     if (!newUser) {

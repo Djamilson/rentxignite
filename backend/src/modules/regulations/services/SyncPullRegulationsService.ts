@@ -56,8 +56,6 @@ class SyncPullRegulationsService {
     let flagOnlyUpdated = [] as Regulation[] | undefined;
     let regulationsBD = [] as Regulation[] | undefined;
 
-    console.log('My regulations::=>>>', regulations);
-
     const cachekey = `regulations`;
 
     let myCacheRegulations = await this.cacheProvider.recover<IResponseData>(

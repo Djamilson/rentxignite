@@ -8,7 +8,7 @@ import IUsersRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
   user_id: string;
-  avatarFilename: string;
+  avatarFilename?: string;
 }
 
 @injectable()
@@ -30,6 +30,10 @@ class UpdateUserAvatarService {
 
     if (user.person.avatar) {
       await this.storageProvider.deleteFile(user.person.avatar);
+    }
+
+    if (!avatarFilename) {
+      throw new AppError('Only authenticated user can change avatar.', 402);
     }
 
     const filename = await this.storageProvider.saveFile(avatarFilename);

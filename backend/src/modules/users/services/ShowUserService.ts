@@ -14,11 +14,7 @@ interface IResponserUser {
   is_verified: boolean;
   roles: string[];
   firstName: string;
-  company: {
-    id?: string;
-    commercial_name?: string;
-    stripe_id?: string;
-  };
+
   person: {
     phone_id_main?: string;
     address_id_main?: string;
@@ -61,21 +57,12 @@ class ShowUserService {
       return role.description;
     });
 
-    const meContract = user.userCompany?.company?.contracts.find(
-      contract => contract.canceled_at === null,
-    );
-
     const userSerealizable = {
       id: user.id,
       is_verified: user.is_verified,
       roles,
       firstName: user.person.name.split(' ')[0],
-      company: {
-        id: user.userCompany?.company.id,
-        commercial_name: user.userCompany?.company.commercial_name,
-        stripe_id: user.userCompany?.company?.contract?.plan.stripe_id,
-        contract_active: !!meContract,
-      },
+
       person: {
         id: user.person.id,
         name: user.person.name,
